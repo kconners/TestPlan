@@ -2,7 +2,8 @@
 const express = require('express')
 const mariadb = require('../database/node_modules/mariadb');
 const pooldb = mariadb.createPool({
-    host     : '127.0.0.1',
+    host     : '192.168.99.100',
+     //host     : '127.0.0.1',
     port     : '3355',
     user     : 'root',
     password : 'Password1*',
@@ -34,6 +35,30 @@ exports.add = async function(req, res){
         finally {
           if (conn) return conn.end();
         }      
+}
+exports.list = async function(req, res){
+  let conn;
+  
+  let table = `select * from client;`
+  
+  try {        
+      conn = await pooldb.getConnection();
+      
+      var rows = await conn.query(table)    
+      console.log(JSON.stringify(rows));      
+      //respon.id = rows.insertId;
+
+      res.status = 200;
+      res.send(JSON.stringify(rows));
+
+      return;
+      } 
+      catch (err) {
+        throw err;
+      } 
+      finally {
+        if (conn) return conn.end();
+      }      
 }
 exports.delete = async function(req, res){
     let conn;
