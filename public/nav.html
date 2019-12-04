@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+
+
+<body>
+
+    <div class="navbar">
+        <span>
+            <table class="navbar-table" style="width: 90%;">
+                <tr style="width:100%;">
+                    <td style="width:10%;">
+                        <div class="dropdown">
+                            <a href="javascript:myFunction('testcases')">Test Cases</a>
+                            <br />
+                            <div id="dd_testcases" class="dropdown-content">
+                                <a href="../../Pages/TestCase/TestCase.html">Add New test case</a><br />
+                                <a href="../../Pages/TestCase/TestCycle.html">Add New test cycle</a><br />
+                            </div>
+                        </div>
+                    </td>
+                    <td style="width:10%;">
+                        <div class="dropdown">
+                            <a href="javascript:myFunction('automation')">Automation</a>
+                            <br />
+                            <div id="dd_automation" class="dropdown-content">
+                                <a href="../../Pages/Automation/Pages.html">Configure Pages</a><br />
+                                <a href="../../Pages/Automation/runner.html">Run Script</a><br />
+                                <a href="../../Pages/TestCase/AutomatedTest.html">Create New Script</a><br />
+                                <a href="#home">My Testing Preferences</a><br />
+                                <a href="#home">Run Script As:</a><br />
+                            </div>
+                        </div>
+                    </td>
+
+                    <td style="width:10%;">
+                        <div class="dropdown">
+                            <a href="javascript:myFunction('administration')">Administration</a>
+                            <br />
+                            <div id="dd_administration" class="dropdown-content">
+                                <a href="../../Pages/Client/ManageClient.html">Client</a><br />
+                                <a href="../../Pages/Administration/ManageActions.html">Actions</a><br />
+                            </div>
+                        </div>
+                    </td>
+                    <td style="width:10%;">
+                        <div class="dropdown">
+                            <a href="javascript:myFunction('reports')">Reports</a>
+                            <br />
+                            <div id="dd_reports" class="dropdown-content">
+                                <a href="../../Pages/TestCase/TestResults.html">Run Execution Report</a><br />
+                                <a href="../../Pages/JMeter/JmeterResults.html">JMeter Reporting</a><br />
+                            </div>
+                        </div>
+                    </td>
+
+                    <td>
+                        <div id="LoginNeeded" style="display:block;float: right;">
+                            <a href="../../Pages/login.html"> Login</a>
+                        </div>
+                    </td>
+                </tr>
+
+               
+            </table>
+        </span>
+
+    </div>
+
+    <div id="LoggedIn" style="display:none;">
+        <a href="javascript:logout()"> Logout</a>
+        <label id="Label_LoggedIn"> </label>
+    </div>
+    <br /><br /><br />
+    <script>
+     
+        function myFunction(Menu) {
+            if (Menu === "testcases") { document.getElementById("dd_testcases").classList.toggle("show"); }
+            else if (Menu === "automation") { document.getElementById("dd_automation").classList.toggle("show"); }
+            else if (Menu === "administration") { document.getElementById("dd_administration").classList.toggle("show"); }
+            else if (Menu === "reports") { document.getElementById("dd_reports").classList.toggle("show"); }
+        }
+        // Close the dropdown if the user clicks outside of it
+        window.onclick = function (event) {
+            matches = event.target.matches ? event.target.matches('.dropbtn') : event.target.msMatchesSelector('.dropbtn');
+            if (!matches) {
+                // if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                var i;
+                for (i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+        function CheckToSeeIfLoggedIn() {
+            var myCookie = getCookie("username");
+            if (myCookie == null) {
+                document.getElementById("LoggedIn").style.display = "none";
+                document.getElementById("LoginNeeded").style.display = "block";
+                document.getElementById("navigation_highlevel").style.display = "none";
+            }
+            else {
+                $("#Label_LoggedIn").text('Logged In as ' + myCookie);
+                document.getElementById("LoginNeeded").style.display = "none";
+                document.getElementById("LoggedIn").style.display = "block";
+                document.getElementById("navigation_highlevel").style.display = "block";
+            }
+            loadLWVersion();
+            var ISLoyaltyWare;
+            getUserPermission(getCookie('okenTeh'), 'lw')
+                .then(function (value) {
+                    if (value === '1') { LogINLW(); }
+                    else { LogOutLW(); }
+                })
+        }
+        function logout() {
+            delete_cookie("username", "", "cy2qawbs06");
+            delete_cookie("okenTeh", "", "cy2qawbs06");
+            CheckToSeeIfLoggedIn();
+            window.location.reload(false);
+        }
+        function delete_cookie(name, path, domain) {
+            if (getCookie(name)) {
+                document.cookie = name + "=" + ((path) ? ";path=" + path : "") + ((domain) ? ";domain=" + domain : "") + ";expires=Thu, 01 Jan 1970 00:00:01 GMT";
+            }
+        }
+    </script>
+</body>
+</html>

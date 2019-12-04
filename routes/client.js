@@ -2,8 +2,8 @@
 const express = require('express')
 const mariadb = require('../database/node_modules/mariadb');
 const pooldb = mariadb.createPool({
-    host     : '192.168.99.100',
-     //host     : '127.0.0.1',
+     //host     : '192.168.99.100',
+     host     : '127.0.0.1',
     port     : '3355',
     user     : 'root',
     password : 'Password1*',

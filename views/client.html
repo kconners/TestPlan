@@ -1,3 +1,111 @@
-<body>
-    <p>Clients!!!</p>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Client Maintenance</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src= "/commonlyUsed.js"></script>
+    <script type="text/JavaScript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    <script>$(function () { $("#nav-placeholder").load("/nav.html"); });</script>
+</head>
+<body onload="GetAllClients()">
+    <div id="nav-placeholder"></div>
+    <span id="uuid" style="display:none"></span><br />
+    <div style="height:100px;overflow:auto;">
+
+        <table id="table_clients">
+            <thead>
+            <th>Client Name</th>
+            <th>Client Short Name</th>
+            <th>Client Options</th>
+            </thead>
+            <tr></tr>
+        </table>
+
+    </div>
+
+    <table>
+        <tbody>
+            <tr>
+                <td>Client Name</td>
+                <td><input type="text" id="tb_name" /></td>
+            </tr>
+            <tr>
+                <td>Client Short Name</td>
+                <td><input type="text" id="tb_shortName" /></td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <button onclick="Add_Client()">Add Client</button>
+    <script>
+        function isOdd(num) {
+    var OO = num % 2;
+    return OO;
+}
+        function GetAllClients() {
+            $("#table_clients tbody tr").remove();
+            var tableRef = document.getElementById('table_clients').getElementsByTagName('tbody')[0];
+            var data = null;
+            var xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+            xhr.addEventListener("readystatechange", function () {
+                if (this.readyState === 4) {
+                    var data = JSON.parse(this.responseText);
+                    for (var i = 0; i < data.length; i++) {
+                        
+                        var _id = data[i].id;
+                        var _client = data[i].name;
+                        var _short = data[i].shrt_name;
+                        var rowNum = tableRef.rows.length;
+                        var newRow = tableRef.insertRow(rowNum);
+                        newRow.setAttribute("class", "table_row_" + isOdd(rowNum));
+                        var newCell1 = newRow.insertCell(0);
+                        var clientID = document.createTextNode((_id));
+                        newCell1.setAttribute("style", "display:none");
+                        newCell1.appendChild(clientID);
+                        var newCell2 = newRow.insertCell(1);
+                        var client_name = document.createTextNode((_client));
+                        newCell2.appendChild(client_name);
+                        var newCell3 = newRow.insertCell(2);
+                        var client_sn = document.createTextNode((_short));
+                        newCell3.appendChild(client_sn);
+                        var newCell4 = newRow.insertCell(3);
+                        var a_delete = document.createElement("a");
+                        a_delete.text = "Delete";
+                        a_delete.href = "javascript:DeleteAction(" + rowNum + ",GetAllClients)";
+                        newCell4.appendChild(a_delete);
+                        var a_Applications = document.createElement("a");
+                        a_Applications.text = "  Applications";
+                        a_Applications.href = "ManageClientsApplications.html?client=" + _id;
+                        newCell4.appendChild(a_Applications);
+                    }
+                }
+            });
+            xhr.open("GET", "/client");
+            xhr.setRequestHeader("cache-control", "no-cache");
+            xhr.send(data);
+        }
+        function setUUID() {
+            document.getElementById('uuid').innerHTML = generateUUID();
+        }
+        function Add_Client() {
+            var _client = $(tb_name).val();
+            var _shortname = $(tb_shortName).val();
+            var _clientID = $(uuid).val();
+            var _loggedInAs = "kconners";
+            if (_client.length > 0 && _shortname > 0) {
+                var data = JSON.stringify({
+                    "client": _client,
+                    "shortname": _shortname,
+                    "idnumber": _clientID,
+                });
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "/../api/Client?loggedInas=" + _loggedInAs, false);
+                xhr.setRequestHeader("Cache-Control", "no-cache");
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.send(data);
+            }
+        };
+    </script>
 </body>
