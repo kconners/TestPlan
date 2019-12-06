@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Applications</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src= "/commonlyUsed.js"></script>
+    <script type="text/JavaScript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    <script>$(function () { $("#nav-placeholder").load("/nav.html"); });</script>
+</head>
+<body onload="LoadApplications();">
+    <div id="nav-placeholder"></div>
+    <a href="client.html">Clients</a>
+    <div style="height:100px;overflow:auto;">
+
+        <table id="table_applications">
+            <thead>
+            <th>Application Name</th>
+            <th>App Short Name</th>
+            <th>Application Options</th>
+            </thead>
+            <tr></tr>
+        </table>
+
+    </div>
+
+
+
+    <script>
+        function LoadApplications() {
+            $("#table_applications tbody tr").remove();
+            var client_idnumber = getUrlVars()["client"];
+            var tableRef = document.getElementById('table_applications').getElementsByTagName('tbody')[0];
+            var data = null;
+            var xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+            xhr.addEventListener("readystatechange", function () {
+                if (this.readyState === 4) {
+                    var data = JSON.parse(this.responseText);
+                    for (var i = 0; i < data.applications.length; i++) {
+                        // alert(data.actions[i].action);
+                        var _id = data.applications[i].idnumber;
+                        var _application = data.applications[i].name;
+                        var _short = data.applications[i].srt_name;
+                        var rowNum = tableRef.rows.length;
+                        var newRow = tableRef.insertRow(rowNum);
+                        newRow.setAttribute("class", "table_row_" + isOdd(rowNum));
+                        var newCell1 = newRow.insertCell(0);
+                        var applicationID = document.createTextNode((_id));
+                        newCell1.setAttribute("style", "display:none");
+                        newCell1.appendChild(applicationID);
+                        var newCell2 = newRow.insertCell(1);
+                        var applciation_name = document.createTextNode((_application));
+                        newCell2.appendChild(applciation_name);
+                        var newCell3 = newRow.insertCell(2);
+                        var application_sn = document.createTextNode((_short));
+                        newCell3.appendChild(application_sn);
+                        var newCell4 = newRow.insertCell(3);
+                        var a_delete = document.createElement("a");
+                        a_delete.text = "Delete";
+                        a_delete.href = "javascript:DeleteAction(" + rowNum + ",GetAllClients)";
+                        newCell4.appendChild(a_delete);
+                    }
+                }
+            });
+            xhr.open("GET", "/client/" + client_idnumber + "/application");
+            xhr.setRequestHeader("cache-control", "no-cache");
+            xhr.send(data);
+        }
+    </script>
+
+</body>
+</html>

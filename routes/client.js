@@ -8,8 +8,8 @@ exports.add = async function(req, res){
     let respon = req.body;
     let username = req.query.loggedInAs;
     
-    let table = `INSERT INTO client (name, shrt_name, created_by, updated_by, created_at, updated_at) 
-                  VALUES('${respon.name}','${respon.shrt_name}','${username}','kconners',NOW(),NOW())`
+    let table = `INSERT INTO ref_client (name, shrt_name, status,created_by, updated_by, created_at, updated_at) 
+                  VALUES('${respon.name}','${respon.shrt_name}',1,'${username}','${username}',NOW(),NOW())`
     
     try {        
         conn = await db.pooldb.getConnection();
@@ -33,7 +33,7 @@ exports.add = async function(req, res){
 exports.list = async function(req, res){
   let conn;
   
-  let table = `select * from client;`
+  let table = `select * from ref_client;`
   
   try {        
       conn = await db.pooldb.getConnection();
@@ -56,7 +56,7 @@ exports.list = async function(req, res){
 }
 exports.delete = async function(req, res){
     let conn;
-    let command = `delete from client where id = ${req.params.id}`
+    let command = `delete from ref_client where id = ${req.params.id}`
     
     try {        
         conn = await pooldb.getConnection();

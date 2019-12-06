@@ -29,4 +29,10 @@ app.get('/quit', function(req,res) {
     server.close();
   });
 
+
+
+  app.get('/ManageClientsApplications.html',function(req,res) {
+    res.sendFile(__dirname + '/public/views/ManageClientsApplications.html');
+  });
+
 var server = app.listen(port, () => console.log(`Example app listening on port ${port}!`))

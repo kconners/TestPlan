@@ -16,14 +16,12 @@ module.exports = { addClients :  function (){
       
   let conn;
   
-  let table = `INSERT INTO client (name, shrt_name, created_by, updated_by, created_at, updated_at) 
-  VALUES('${element.client}','${element.shrt}','kconners','kconners',NOW(),NOW())`
+  let table = `INSERT INTO ref_client (name, shrt_name, status,created_by, updated_by, created_at, updated_at) 
+  VALUES('${element.client}','${element.shrt}',1,'kconners','kconners',NOW(),NOW())`
   
   try {
-    conn = await pooldb.getConnection();
-    const rows = await conn.query(table);
-    console.log(rows);
-   
+      conn = await pooldb.getConnection();
+      const rows = await conn.query(table);
   } catch (err) {
     throw err;
   } finally {
