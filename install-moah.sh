@@ -8,6 +8,5 @@ docker run --name moah --publish=3355:3306 --ulimit nofile=65536:65536 -e MYSQL_
 cd database
 npm install
 npm run build
-
 cd ..
 node index.js

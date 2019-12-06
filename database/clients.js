@@ -12,6 +12,7 @@ const pooldb = mariadb.createPool({
 });
 
 module.exports = { addClients :  function (){
+  let results = clients.length;
   clients.forEach(async element => {
       
   let conn;
@@ -22,6 +23,9 @@ module.exports = { addClients :  function (){
   try {
       conn = await pooldb.getConnection();
       const rows = await conn.query(table);
+      results--;
+
+      if(results == 0){process.exit();}
   } catch (err) {
     throw err;
   } finally {

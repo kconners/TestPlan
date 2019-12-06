@@ -27,7 +27,7 @@ module.exports.pooldb = mariadb.createPool({
      setTimeout(hi,15000);
      setTimeout(Connect,15000);
      setTimeout(addTable,15000);
-     setTimeout(clients.addClients,15000);
+     
  }
 function hi(){
     console.log('docker is spinning');
@@ -40,6 +40,7 @@ const tables = [{"tableName":"client","tableType":"reference"},
               ];
 
  function addTable(){
+    var requests = tables.length;
     let conn;
 
 
@@ -58,15 +59,19 @@ const tables = [{"tableName":"client","tableType":"reference"},
       console.log(element.tableType.toLocaleLowerCase())
     }
     try {
-      console.log(table);
+      
       conn = await module.exports.pooldb.getConnection();
       const rows = await conn.query(table);
-      console.log(JSON.stringify(rows));
+      requests--;
+      
+      if (requests == 0) {clients.addClients();}  
     } catch (err) {
       throw err;
     } finally {
       if (conn) return conn.end();
-    }    
+
+    }  
+    
    });
  }
 
