@@ -73,7 +73,7 @@
                         var newCell4 = newRow.insertCell(3);
                         var a_delete = document.createElement("a");
                         a_delete.text = "Delete";
-                        a_delete.href = "javascript:DeleteAction(" + rowNum + ",GetAllClients)";
+                        a_delete.href = "javascript:DeleteClient(" + rowNum + ",GetAllClients)";
                         newCell4.appendChild(a_delete);
                         var a_Applications = document.createElement("a");
                         a_Applications.text = "  Applications";
@@ -86,26 +86,34 @@
             xhr.setRequestHeader("cache-control", "no-cache");
             xhr.send(data);
         }
-        function setUUID() {
-            document.getElementById('uuid').innerHTML = generateUUID();
-        }
         function Add_Client() {
             var _client = $(tb_name).val();
             var _shortname = $(tb_shortName).val();
-            var _clientID = $(uuid).val();
             var _loggedInAs = "kconners";
-            if (_client.length > 0 && _shortname > 0) {
+            if (_client.length > 0 && _shortname.length > 0) {
+       
                 var data = JSON.stringify({
-                    "client": _client,
-                    "shortname": _shortname,
-                    "idnumber": _clientID,
+                    "name": _client,
+                    "shrt_name": _shortname
                 });
                 var xhr = new XMLHttpRequest();
-                xhr.open("POST", "/../api/Client?loggedInas=" + _loggedInAs, false);
+                xhr.open("POST", "/client?loggedInAs=" + _loggedInAs, false);
                 xhr.setRequestHeader("Cache-Control", "no-cache");
                 xhr.setRequestHeader("Content-Type", "application/json");
                 xhr.send(data);
+                GetAllClients();
             }
         };
-    </script>
+        function DeleteClient(rowNumber) {
+            var rowID = document.getElementById("table_clients").rows[rowNumber + 1].cells[0].innerHTML;
+            var _loggedInAs = "kconners";
+            var data = null;
+            var xhr = new XMLHttpRequest();
+            xhr.open("DELETE", `/client/${rowID}?loggedInas=${_loggedInAs}`, false);
+            xhr.setRequestHeader("Cache-Control", "no-cache");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(data);
+            GetAllClients();
+        }
+   </script>
 </body>

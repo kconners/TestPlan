@@ -3,7 +3,7 @@ var clients = require("./clients.js");
 const mariadb = require('mariadb');
 const dbName = 'client_data';
 
-const pool = mariadb.createPool({
+module.exports.pool = mariadb.createPool({
     //host     : '192.168.99.100',
     host     : '127.0.0.1',
     port     : '3355',
@@ -11,7 +11,7 @@ const pool = mariadb.createPool({
     password : 'Password1*',
     connectionLimit: 5
 });
-const pooldb = mariadb.createPool({
+module.exports.pooldb = mariadb.createPool({
     //host     : '192.168.99.100',
     host     : '127.0.0.1',
     port     : '3355',
@@ -43,7 +43,7 @@ const tables = [{"tableName":"client"},{"tableName":"testcase"}];
       
     
 
-    let table = `CREATE TABLE ${element.tableName} (id INT NOT NULL AUTO_INCREMENT,name VARCHAR(50) NOT NULL,shrt_name VARCHAR(50) NOT NULL, INDEX id (id));`
+    let table = `CREATE TABLE ${element.tableName} (id INT NOT NULL AUTO_INCREMENT, name VARCHAR(50) NOT NULL, shrt_name VARCHAR(50) NOT NULL, created_by VARCHAR(50) NOT NULL, updated_by VARCHAR(50) NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, INDEX id (id));`
     try {
       console.log(table);
       conn = await pooldb.getConnection();

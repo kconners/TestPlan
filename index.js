@@ -17,7 +17,9 @@ app.get('/', (req, res) => res.send('Hello World!'));
 app.get('/client.html',function(req,res) {
   res.sendFile(__dirname + '/views/client.html');
 });
-app.post('/client', (req, res) =>client.add(req, res));
+app.post('/client', (req, res)  => client.add(req, res));
+
+
 app.get('/client', (req, res) =>client.list(req, res));
 app.delete('/client/:id', (req, res) =>client.delete(req, res));
 

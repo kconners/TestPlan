@@ -1,24 +1,18 @@
 
 const express = require('express')
 const mariadb = require('../database/node_modules/mariadb');
-const pooldb = mariadb.createPool({
-     //host     : '192.168.99.100',
-     host     : '127.0.0.1',
-    port     : '3355',
-    user     : 'root',
-    password : 'Password1*',
-    connectionLimit: 5,
-    database : 'client_data'
-});
+const db = require('../database/startDB')
 
 exports.add = async function(req, res){
     let conn;
     let respon = req.body;
+    let username = req.query.loggedInAs;
     
-    let table = `INSERT INTO client (name, shrt_name) VALUES('${respon.name}','${respon.shrt_name}')`
+    let table = `INSERT INTO client (name, shrt_name, created_by, updated_by, created_at, updated_at) 
+                  VALUES('${respon.name}','${respon.shrt_name}','${username}','kconners',NOW(),NOW())`
     
     try {        
-        conn = await pooldb.getConnection();
+        conn = await db.pooldb.getConnection();
         
         var rows = await conn.query(table)    
         
@@ -42,7 +36,7 @@ exports.list = async function(req, res){
   let table = `select * from client;`
   
   try {        
-      conn = await pooldb.getConnection();
+      conn = await db.pooldb.getConnection();
       
       var rows = await conn.query(table)    
       console.log(JSON.stringify(rows));      
