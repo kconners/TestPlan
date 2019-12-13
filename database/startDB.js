@@ -35,7 +35,12 @@ function hi(){
 
 const tables = [{"tableName":"client","tableType":"reference"},
                 {"tableName":"application","tableType":"client"},
-                {"tableName":"testcase","tableType":"client"},
+                {"tableName":"testcase","tableType":"client","extraColumns":[
+                  {"columnName":"summary","columnType":"text"},
+                  {"columnName":"component","columnType":"VARCHAR(150)"},
+                  {"columnName":"version","columnType":"VARCHAR(50)"},
+                  {"columnName":"priority","columnType":"VARCHAR(50)"}
+                ]},
                 {"tableName":"client_application","tableType":"mapping"},
               ];
 
@@ -53,13 +58,23 @@ const tables = [{"tableName":"client","tableType":"reference"},
        table = `CREATE TABLE ${element.tableName}_mapping (id INT NOT NULL AUTO_INCREMENT, client_id INT NOT NULL, parent INT NOT NULL, child INT NOT NULL, status INT NOT NULL, created_by VARCHAR(50) NOT NULL, updated_by VARCHAR(50) NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, INDEX id (id));`
     }
     else if (element.tableType.toLocaleLowerCase() === "client"){
-       table = `CREATE TABLE c_${element.tableName} (id INT NOT NULL AUTO_INCREMENT, client_id INT NOT NULL, name VARCHAR(50) NOT NULL, shrt_name VARCHAR(50) NOT NULL, description text NOT NULL, status INT NOT NULL, created_by VARCHAR(50) NOT NULL, updated_by VARCHAR(50) NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, INDEX id (id));`
+       let ExtraColumns = "";
+       if(element.extraColumns && element.extraColumns.length >= 1)
+       {
+        element.extraColumns.forEach(i => 
+ExtraColumns = ExtraColumns + `${i.columnName} ${i.columnType},`);
+         
+       }
+
+
+
+       table = `CREATE TABLE c_${element.tableName} (id INT NOT NULL AUTO_INCREMENT, client_id INT NOT NULL, name VARCHAR(50) NOT NULL, ${ExtraColumns} shrt_name VARCHAR(50) NOT NULL, description text NOT NULL, status INT NOT NULL, created_by VARCHAR(50) NOT NULL, updated_by VARCHAR(50) NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, INDEX id (id));`
     }
     else {
       console.log(element.tableType.toLocaleLowerCase())
     }
     try {
-      
+      console.log(table);
       conn = await module.exports.pooldb.getConnection();
       const rows = await conn.query(table);
       requests--;

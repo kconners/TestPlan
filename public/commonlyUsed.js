@@ -76,19 +76,13 @@ function loadClients(callback) {
 
 function loadClientsNoCallBack() {
     
-    var THISURL = "http://"+window.location.hostname + ":" +window.location.port;
-
     var dd_Clients = document.getElementById("dd_clientSelect");
-    var dd_Applications = document.getElementById("dd_applicationSelect");
-
+    
     var length = dd_Clients.options.length;
     for (i = 0; i < length; i++) {
         dd_Clients.options[i] = null;
     }
-    var Application_length = dd_Applications.options.length;
-    for (i = 0; i < Application_length; i++) {
-        dd_Applications.options[i] = null;
-    }
+    
     
     var data = null;
     var xhr = new XMLHttpRequest();
@@ -96,20 +90,18 @@ function loadClientsNoCallBack() {
     xhr.addEventListener("readystatechange", function () {
         if (this.readyState === 4) {
             var data = JSON.parse(this.responseText);
-            for (var i = 0; i < data.clients.length; i++) {
-                if (i === 0) { loadApplications(data.clients[i].idnumber);}
-                // alert(data.actions[i].action);
+            for (var i = 0; i < data.length; i++) {
                 
                 var option = document.createElement("option");
-                option.text = data.clients[i].client;
-                option.value = data.clients[i].idnumber;
+                option.text = data[i].name;
+                option.value = data[i].id;
                 dd_Clients.add(option);
 
             }
         }
     });
 
-    xhr.open("GET", THISURL +"/api/Client");
+    xhr.open("GET", "/Client");
     xhr.setRequestHeader("cache-control", "no-cache");
 
     xhr.send(data);
