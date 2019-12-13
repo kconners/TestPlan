@@ -1,5 +1,6 @@
 var clients = [{"client":"Greyhound","shrt":"gh"},{"client":"Securus","shrt":"sec"}];
 const mariadb = require('mariadb');
+const common = require('../public/commonlyUsed')
 
 const pooldb = mariadb.createPool({
     // host     : '192.168.99.100',
@@ -16,9 +17,9 @@ module.exports = { addClients :  function (){
   clients.forEach(async element => {
       
   let conn;
-  
-  let table = `INSERT INTO ref_client (name, shrt_name, status,created_by, updated_by, created_at, updated_at) 
-  VALUES('${element.client}','${element.shrt}',1,'kconners','kconners',NOW(),NOW())`
+  let ID = common.generateUUID();
+  let table = `INSERT INTO ref_client (id ,name, shrt_name, status,created_by, updated_by, created_at, updated_at) 
+  VALUES('${ID}','${element.client}','${element.shrt}',1,'kconners','kconners',NOW(),NOW())`
   
   try {
       conn = await pooldb.getConnection();

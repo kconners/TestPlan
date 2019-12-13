@@ -41,6 +41,13 @@ const tables = [{"tableName":"client","tableType":"reference"},
                   {"columnName":"version","columnType":"VARCHAR(50)"},
                   {"columnName":"priority","columnType":"VARCHAR(50)"}
                 ]},
+                {"tableName":"teststep","tableType":"client","extraColumns":[
+                  {"columnName":"testcase_idnumber","columnType":"INT"},
+                  {"columnName":"order_number","columnType":"INT"},
+                  {"columnName":"step","columnType":"text"},
+                  {"columnName":"test_data","columnType":"text"},
+                  {"columnName":"expected_result","columnType":"text"}
+                ]},
                 {"tableName":"client_application","tableType":"mapping"},
               ];
 
@@ -52,31 +59,28 @@ const tables = [{"tableName":"client","tableType":"reference"},
     tables.forEach(async element => {
       let table = '';
     if(element.tableType.toLocaleLowerCase() === "reference"){
-      table = `CREATE TABLE ref_${element.tableName} (id INT NOT NULL AUTO_INCREMENT, name VARCHAR(50) NOT NULL, shrt_name VARCHAR(50) NOT NULL, status INT NOT NULL, created_by VARCHAR(50) NOT NULL, updated_by VARCHAR(50) NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, INDEX id (id));`
+     table = `CREATE TABLE ref_${element.tableName} (id VARCHAR(50), name VARCHAR(50) NOT NULL, shrt_name VARCHAR(50) NOT NULL, status INT NOT NULL, created_by VARCHAR(50) NOT NULL, updated_by VARCHAR(50) NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL);`
     }
     else if (element.tableType.toLocaleLowerCase() === "mapping"){
-       table = `CREATE TABLE ${element.tableName}_mapping (id INT NOT NULL AUTO_INCREMENT, client_id INT NOT NULL, parent INT NOT NULL, child INT NOT NULL, status INT NOT NULL, created_by VARCHAR(50) NOT NULL, updated_by VARCHAR(50) NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, INDEX id (id));`
+      table = `CREATE TABLE ${element.tableName}_mapping (id VARCHAR(50), client_id VARCHAR(50), parent INT NOT NULL, child INT NOT NULL, status INT NOT NULL, created_by VARCHAR(50) NOT NULL, updated_by VARCHAR(50) NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL);`
     }
     else if (element.tableType.toLocaleLowerCase() === "client"){
-       let ExtraColumns = "";
-       if(element.extraColumns && element.extraColumns.length >= 1)
+      let ExtraColumns = "";
+      if(element.extraColumns && element.extraColumns.length >= 1)
        {
-        element.extraColumns.forEach(i => 
-ExtraColumns = ExtraColumns + `${i.columnName} ${i.columnType},`);
-         
+         element.extraColumns.forEach(i => 
+         ExtraColumns = ExtraColumns + `${i.columnName} ${i.columnType},`);
        }
-
-
-
-       table = `CREATE TABLE c_${element.tableName} (id INT NOT NULL AUTO_INCREMENT, client_id INT NOT NULL, name VARCHAR(50) NOT NULL, ${ExtraColumns} shrt_name VARCHAR(50) NOT NULL, description text NOT NULL, status INT NOT NULL, created_by VARCHAR(50) NOT NULL, updated_by VARCHAR(50) NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, INDEX id (id));`
+      table = `CREATE TABLE c_${element.tableName} (id VARCHAR(50), client_id VARCHAR(50), name VARCHAR(50) NOT NULL,shrt_name VARCHAR(50) NOT NULL,  ${ExtraColumns} description text NOT NULL, status INT NOT NULL, created_by VARCHAR(50) NOT NULL, updated_by VARCHAR(50) NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL);`
     }
     else {
       console.log(element.tableType.toLocaleLowerCase())
     }
     try {
-      console.log(table);
+      
       conn = await module.exports.pooldb.getConnection();
       const rows = await conn.query(table);
+      
       requests--;
       
       if (requests == 0) {clients.addClients();}  

@@ -34,6 +34,7 @@ app.get('/client', (req, res) =>client.list(req, res));
 app.delete('/client/:id', (req, res) =>client.delete(req, res));
 app.get('/client/:id/testCase', (req, res) =>testCase.list(req, res));
 app.post('/testCase', (req, res)  => testCase.add(req, res));
+app.put('/testCase/:id', (req, res)  => testCase.update(req, res));
 
 
 app.get('/quit', function(req,res) {

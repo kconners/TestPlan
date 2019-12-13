@@ -2,14 +2,15 @@
 const express = require('express')
 const mariadb = require('../database/node_modules/mariadb');
 const db = require('../database/startDB')
+const common = require('../public/commonlyUsed')
 
 exports.add = async function(req, res){
     let conn;
     let respon = req.body;
     let username = req.query.loggedInAs;
-    
-    let table = `INSERT INTO ref_client (name, shrt_name, status,created_by, updated_by, created_at, updated_at) 
-                  VALUES('${respon.name}','${respon.shrt_name}',1,'${username}','${username}',NOW(),NOW())`
+    let ID = common.generateUUID();
+    let table = `INSERT INTO ref_client (id, name, shrt_name, status,created_by, updated_by, created_at, updated_at) 
+                  VALUES('${ID}','${respon.name}','${respon.shrt_name}',1,'${username}','${username}',NOW(),NOW())`
     
     try {        
         conn = await db.pooldb.getConnection();

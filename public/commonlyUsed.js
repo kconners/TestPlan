@@ -1,4 +1,4 @@
-function generateUUID() {
+module.exports = { generateUUID :  function() {
     var d = new Date().getTime();
     if (Date.now) {
         d = Date.now(); //high-precision timer
@@ -10,6 +10,7 @@ function generateUUID() {
     });
     // document.getElementById('uuid').innerHTML = uuid;
     return uuid;
+}
 }
 function isOdd(num) {
     var OO = num % 2;
