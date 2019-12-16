@@ -9,22 +9,23 @@ exports.add = async function(req, res){
     let conn;
     let respon = req.body;
     let username = req.query.loggedInAs;
-    let ID = common.generateUUID();
+    let testcase_id = req.params.id;
     
-    let table = `INSERT INTO c_testcase (id, client_id ,name,summary,component,version,priority , shrt_name, description ,status,   created_by,   updated_by, created_at, updated_at) 
-                                   VALUES(?,          ?,   ?,      ?,        ?,      ?,        ?,         ?,            ?,     1,'${username}','${username}',NOW(),NOW())`
+    let table = `INSERT INTO c_teststep (id, client_id ,name,shrt_name ,testcase_idnumber,order_number,step , test_Data, expected_result, description ,status,   created_by,   updated_by, created_at, updated_at) 
+                                   VALUES(?,          ?,   ?,''        ,                ?,           ?,    ?,         ?,               ?,            ?,     1,'${username}','${username}',NOW(),NOW())`
     
     try {        
         conn = await db.pooldb.getConnection();
         console.log(table);
-        var rows = await conn.query(table,[ID,
+        var rows = await conn.query(table,[
+                                           respon.id,
                                            respon.client_id,
                                            respon.name,
-                                           respon.summary,
-                                           respon.component,
-                                           respon.version,
-                                           respon.priority,
-                                           respon.shrt_name, 
+                                           testcase_id,
+                                           respon.orderNumber,
+                                           respon.step,
+                                           respon.testData,
+                                           respon.expectedResult, 
                                            respon.description
                                           ])    
         
@@ -77,13 +78,11 @@ exports.update = async function(req, res){
   let respon = req.body;
   let username = req.query.loggedInAs;
   
-  let table = `Update c_testcase 
-                set name = ?,
-                    summary = ?,
-                    component = ?,
-                    version = ?,
-                    priority = ?,
-                    shrt_name = ?,
+  let table = `Update c_teststep 
+                set order_number = ?,
+                    step = ?,
+                    test_data = ?,
+                    expected_result = ?,
                     description = ?,
                     status = ?,
                     updated_by = '${username}',
@@ -93,12 +92,10 @@ exports.update = async function(req, res){
   try {        
       conn = await db.pooldb.getConnection();
       
-      var rows = await conn.query(table,[respon.name,
-                                         respon.summary,
-                                         respon.component,
-                                         respon.version,
-                                         respon.priority,
-                                         respon.shrt_name, 
+      var rows = await conn.query(table,[respon.orderNumber,
+                                         respon.step,
+                                         respon.testData,
+                                         respon.expectedResult,
                                          respon.description,
                                          respon.status,
                                          req.params.id
@@ -121,7 +118,7 @@ exports.update = async function(req, res){
 exports.list = async function(req, res){
     let conn;
     
-    let table = `select * from c_testcase where client_id = '${req.params.id}' and status > 0;`
+    let table = `SELECT * FROM client_data.c_teststep where testcase_idnumber = '${req.params.id}' and status > 0 order by order_number;`
     
     try {        
         conn = await db.pooldb.getConnection();
@@ -141,28 +138,4 @@ exports.list = async function(req, res){
         finally {
           if (conn) return conn.end();
         }      
-}
-exports.get = async function(req, res){
-  let conn;
-  
-  let table = `select * from c_testcase where id = '${req.params.id}'`
-  
-  try {        
-      conn = await db.pooldb.getConnection();
-      
-      var rows = await conn.query(table)    
-      
-      //respon.id = rows.insertId;
-
-      res.status = 200;
-      res.send(JSON.stringify(rows));
-
-      return;
-      } 
-      catch (err) {
-        throw err;
-      } 
-      finally {
-        if (conn) return conn.end();
-      }      
 }

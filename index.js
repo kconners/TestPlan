@@ -5,6 +5,7 @@ var fs = require('fs')
 
 var client = require('./routes/client');
 var testCase = require('./routes/testcase');
+var testStep = require('./routes/teststeps');
 var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
@@ -36,9 +37,13 @@ app.delete('/client/:id', (req, res) =>client.delete(req, res));
 
 app.get('/client/:id/testCase', (req, res) =>testCase.list(req, res));
 app.post('/testCase', (req, res)  => testCase.add(req, res));
+app.get('/testCase/:id', (req, res)  => testCase.get(req, res));
 app.put('/testCase/:id', (req, res)  => testCase.update(req, res));
 app.delete('/testCase/:id', (req, res)  => testCase.delete(req, res));
 
+app.get('/testCase/:id/testSteps', (req, res) =>testStep.list(req, res));
+app.post('/testCase/:id/testSteps', (req, res) =>testStep.add(req, res));
+app.put('/testSteps/:id', (req, res) =>testStep.update(req, res));
 
 app.get('/quit', function(req,res) {
     res.send('closing..');

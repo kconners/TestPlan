@@ -42,7 +42,7 @@ const tables = [{"tableName":"client","tableType":"reference"},
                   {"columnName":"priority","columnType":"VARCHAR(50)"}
                 ]},
                 {"tableName":"teststep","tableType":"client","extraColumns":[
-                  {"columnName":"testcase_idnumber","columnType":"INT"},
+                  {"columnName":"testcase_idnumber","columnType":"VARCHAR(50)"},
                   {"columnName":"order_number","columnType":"INT"},
                   {"columnName":"step","columnType":"text"},
                   {"columnName":"test_data","columnType":"text"},
