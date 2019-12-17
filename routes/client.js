@@ -8,7 +8,16 @@ exports.add = async function(req, res){
     let conn;
     let respon = req.body;
     let username = req.query.loggedInAs;
-    let ID = common.generateUUID();
+
+    let ID = '';
+    if(!respon.id){
+      ID = common.generateUUID();
+    }
+    else {
+      ID = respon.id;
+    }
+
+     
     let table = `INSERT INTO ref_client (id, name, shrt_name, status,created_by, updated_by, created_at, updated_at) 
                   VALUES('${ID}','${respon.name}','${respon.shrt_name}',1,'${username}','${username}',NOW(),NOW())`
     
@@ -57,7 +66,7 @@ exports.list = async function(req, res){
 }
 exports.delete = async function(req, res){
     let conn;
-    let command = `delete from ref_client where id = ${req.params.id}`
+    let command = `delete from ref_client where id = '${req.params.id}'`
     
     try {        
         conn = await db.pooldb.getConnection();

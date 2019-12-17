@@ -48,7 +48,7 @@ exports.delete = async function(req, res){
   let respon = req.body;
   let username = req.query.loggedInAs;
   
-  let table = `UPDATE c_testcase
+  let table = `UPDATE c_teststep
   
   set status = -1,
   updated_by = '${username}',

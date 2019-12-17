@@ -3,6 +3,8 @@ const app = express()
 const port = 3000
 var fs = require('fs')
 
+const common = require('./database/finishDB');
+
 var client = require('./routes/client');
 var testCase = require('./routes/testcase');
 var testStep = require('./routes/teststeps');
@@ -26,28 +28,26 @@ app.get('/TestCycle.html',function(req,res) {
   res.sendFile(__dirname + '/public/views/TestCycle.html');
 });
 
-
-
 app.post('/client', (req, res)  => client.add(req, res));
-
-
 app.get('/client', (req, res) =>client.list(req, res));
 app.delete('/client/:id', (req, res) =>client.delete(req, res));
-
-
 app.get('/client/:id/testCase', (req, res) =>testCase.list(req, res));
+
 app.post('/testCase', (req, res)  => testCase.add(req, res));
 app.get('/testCase/:id', (req, res)  => testCase.get(req, res));
 app.put('/testCase/:id', (req, res)  => testCase.update(req, res));
 app.delete('/testCase/:id', (req, res)  => testCase.delete(req, res));
-
 app.get('/testCase/:id/testSteps', (req, res) =>testStep.list(req, res));
 app.post('/testCase/:id/testSteps', (req, res) =>testStep.add(req, res));
+
 app.put('/testSteps/:id', (req, res) =>testStep.update(req, res));
+app.delete('/testSteps/:id', (req, res) =>testStep.delete(req, res));
 
 app.get('/quit', function(req,res) {
     res.send('closing..');
-    server.close();
+    
+    common.WriteAFile();
+    //server.close();
   });
 
 

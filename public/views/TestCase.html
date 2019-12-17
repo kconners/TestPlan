@@ -84,7 +84,7 @@
         <button onclick="AddNewStep()">Add New Test Step</button><br/>
     <button onclick="commitEditTestCase(loadTestCases)" id="btn_EditTestCase">Save updates</button>
     <button onclick="commitAddTestCase(loadTestCases)" id="btn_AddThisTestCase">Add This test case</button>
-    
+    <button onclick="WriteId()">Write a file</button>
 
     <button onclick="CancelAddTestCase()" id="btn_Cancel_AddTestCase">Cancel</button>
     </div>
@@ -106,13 +106,13 @@
             xhr.addEventListener("readystatechange", function () {
                 if (this.readyState === 4) {
                     var data = JSON.parse(this.responseText);
-                    for (var i = 0; i < data.teststeps.length; i++) {
+                    for (var i = 0; i < data.length; i++) {
 
-                        var _id = data.teststeps[i].idNumber;
-                        var _stepNumber = data.teststeps[i].orderNumber;
-                        var _step = data.teststeps[i].step;
-                        var _stepTestData = data.teststeps[i].testData;
-                        var _stepExpectedResult = data.teststeps[i].expectedResults;
+                        var _id = data[i].id;
+                        var _stepNumber = data[i].order_number;
+                        var _step = data[i].step;
+                        var _stepTestData = data[i].test_data;
+                        var _stepExpectedResult = data[i].expected_result;
 
                         var rowNum = tableRef.rows.length;
                         var newRow = tableRef.insertRow(rowNum);
@@ -161,7 +161,7 @@
                     }
                 }
             });
-            xhr.open("GET", "http://localhost:65480/api/TestCase/" + testCaseID + "/Steps");
+            xhr.open("GET", "/testCase/" + testCaseID + "/testSteps");
             xhr.setRequestHeader("cache-control", "no-cache");
             xhr.send(data);
         }
@@ -180,13 +180,13 @@
             xhr.addEventListener("readystatechange", function () {
                 if (this.readyState === 4) {
                     var data = JSON.parse(this.responseText);
-                    for (var i = 0; i < data.teststeps.length; i++) {
+                    for (var i = 0; i < data.length; i++) {
 
-                        var _id = data.teststeps[i].idNumber;
-                        var _stepNumber = data.teststeps[i].orderNumber;
-                        var _step = data.teststeps[i].step;
-                        var _stepTestData = data.teststeps[i].testData;
-                        var _stepExpectedResult = data.teststeps[i].expectedResults;
+                        var _id = data[i].id;
+                        var _stepNumber = data[i].order_number;
+                        var _step = data[i].step;
+                        var _stepTestData = data[i].test_data;
+                        var _stepExpectedResult = data[i].expected_result;
 
                         var rowNum = tableRef.rows.length;
                         var newRow = tableRef.insertRow(rowNum);
@@ -242,7 +242,7 @@
                     }
                 }
             });
-            xhr.open("GET", "http://localhost:65480/api/TestCase/" + testCaseID + "/Steps");
+            xhr.open("GET", "/testCase/" + testCaseID + "/testSteps");
             xhr.setRequestHeader("cache-control", "no-cache");
             xhr.send(data);
         }
@@ -255,7 +255,7 @@
             var data = null;
 
             var xhr = new XMLHttpRequest();
-            xhr.open("DELETE", "/../api/TestCase/" + testCaseID + "/Steps/" + rowID + "?loggedInas=" + _loggedInAs, false);
+            xhr.open("DELETE", "/testSteps/" + rowID + "?loggedInas=" + _loggedInAs, false);
             xhr.setRequestHeader("Cache-Control", "no-cache");
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.send(data);
@@ -367,7 +367,7 @@
                 }
             });
             xhr.send(data);
-         //   loadTestSteps(rowNumber);
+            loadTestSteps(rowNumber);
             ShowEditTestCases();
             
         }
@@ -414,13 +414,20 @@
             
         }
         function ShowAddTestCases() {
-
-        $('#EditTestCase').css('display', 'block');
-        $('#btn_Cancel_AddTestCase').css('display', 'block');
-        $('#btn_showNewTestCase').css('display', 'none');
-        
-        setUUID();
+            clearTestCaseFields();
+            $('#EditTestCase').css('display', 'block');
+            $('#btn_Cancel_AddTestCase').css('display', 'block');
+            $('#btn_showNewTestCase').css('display', 'none');
+            setUUID();
         }
+        function clearTestCaseFields(){
+            document.getElementById("tb_component").value = "";
+            document.getElementById("tb_title").value = "";
+            document.getElementById("tb_summary").value = "";
+            document.getElementById("tb_desciption").value = "";
+            document.getElementById("tb_project").value = "";
+            document.getElementById("tb_version").value = "";
+            document.getElementById("tb_priority").value = "";}
         function updateTestSteps(){
           var _loggedInAs = 'kconners';
             var table = document.getElementById("table_teststeps");
@@ -474,7 +481,7 @@
 
             callback();
         };
-         function commitEditTestCase(callback) {
+        function commitEditTestCase(callback) {
             updateTestSteps();
         //     var rowID = $(tc_uuid).text();
             
@@ -634,6 +641,17 @@
             callback();
         };
 
+        function WriteId(){
+            var txtFile = "/tmp/test.txt";
+            var file = new File(txtFile,"write");
+            var str = JSON.stringify(JsonExport);
+
+            log("opening file...");
+            file.open(); 
+            log("writing file..");
+            file.writeline(str);
+            file.close();
+        }
 
         
         
