@@ -641,20 +641,6 @@
             callback();
         };
 
-        function WriteId(){
-            var txtFile = "/tmp/test.txt";
-            var file = new File(txtFile,"write");
-            var str = JSON.stringify(JsonExport);
-
-            log("opening file...");
-            file.open(); 
-            log("writing file..");
-            file.writeline(str);
-            file.close();
-        }
-
-        
-        
     </script>
 
 </body>

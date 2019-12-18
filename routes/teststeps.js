@@ -139,3 +139,27 @@ exports.list = async function(req, res){
           if (conn) return conn.end();
         }      
 }
+exports.getAll = async function(req, res){
+  let conn;
+  
+  let table = `SELECT * FROM client_data.c_teststep;`
+  
+  try {        
+      conn = await db.pooldb.getConnection();
+      
+      var rows = await conn.query(table)    
+      
+      //respon.id = rows.insertId;
+
+      res.status = 200;
+      res.send(JSON.stringify(rows));
+
+      return;
+      } 
+      catch (err) {
+        throw err;
+      } 
+      finally {
+        if (conn) return conn.end();
+      }      
+}

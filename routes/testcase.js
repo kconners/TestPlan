@@ -166,3 +166,27 @@ exports.get = async function(req, res){
         if (conn) return conn.end();
       }      
 }
+exports.getAll = async function(req, res){
+  let conn;
+  
+  let table = `select * from c_testcase`
+  
+  try {        
+      conn = await db.pooldb.getConnection();
+      
+      var rows = await conn.query(table)    
+      
+      //respon.id = rows.insertId;
+
+      res.status = 200;
+      res.send(JSON.stringify(rows));
+
+      return;
+      } 
+      catch (err) {
+        throw err;
+      } 
+      finally {
+        if (conn) return conn.end();
+      }      
+}
