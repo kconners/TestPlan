@@ -9,6 +9,7 @@ exports.add = async function(req, res){
     let conn;
     let respon = req.body;
     let username = req.query.loggedInAs;
+
     let testcase_id = req.params.id;
     
     let table = `INSERT INTO c_teststep (id, client_id ,name,shrt_name ,testcase_idnumber,order_number,step , test_Data, expected_result, description ,status,   created_by,   updated_by, created_at, updated_at) 
@@ -16,7 +17,7 @@ exports.add = async function(req, res){
     
     try {        
         conn = await db.pooldb.getConnection();
-        console.log(table);
+        
         var rows = await conn.query(table,[
                                            respon.id,
                                            respon.client_id,
@@ -30,7 +31,7 @@ exports.add = async function(req, res){
                                           ])    
         
         respon.id = rows.insertId;
-        console.log(JSON.stringify(rows));
+        
         res.status = 200;
         res.send(JSON.stringify(respon));
 

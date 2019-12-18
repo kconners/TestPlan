@@ -14,9 +14,6 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(express.static(__dirname + '/public'));
 
-
-
-
 app.get('/', (req, res) => res.send('Hello World!'));
 
 app.get('/client.html',function(req,res) {
@@ -52,8 +49,6 @@ app.get('/quit', function(req,res) {
     common.WriteAFile();
     //server.close();
   });
-
-
 
   app.get('/ManageClientsApplications.html',function(req,res) {
     res.sendFile(__dirname + '/public/views/ManageClientsApplications.html');

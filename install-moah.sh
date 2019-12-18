@@ -9,4 +9,4 @@ cd database
 npm install
 npm run build
 cd ..
-node index.js
+npm run start

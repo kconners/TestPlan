@@ -83,7 +83,9 @@ const tables = [{"tableName":"client","tableType":"reference"},
       
       requests--;
       
-      if (requests == 0) {clients.addClients();}  
+      if (requests == 0) {
+        process.exit();
+      }  
     } catch (err) {
       throw err;
     } finally {
