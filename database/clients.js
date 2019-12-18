@@ -16,7 +16,7 @@ module.exports = { addClients :  function (){
 
   const fs = require('fs');
 
-  let rawdata = fs.readFileSync('/../public/data/client.json');  
+  let rawdata = fs.readFileSync('../public/data/client.json');  
   let clients = JSON.parse(rawdata);
   
   let results = clients.length;
@@ -24,7 +24,7 @@ module.exports = { addClients :  function (){
       
   let conn;
   let table = `INSERT INTO ref_client (id ,name, shrt_name, status,created_by, updated_by, created_at, updated_at) 
-  VALUES('${element.id}','${element.client}','${element.shrt}',1,'kconners','kconners',NOW(),NOW())`
+  VALUES('${element.id}','${element.name}','${element.shrt_name}',1,'kconners','kconners',NOW(),NOW())`
   
   try {
       conn = await pooldb.getConnection();
