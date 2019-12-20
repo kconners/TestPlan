@@ -39,7 +39,6 @@ app.get('/testCase/:id/testSteps', (req, res) =>testStep.list(req, res));
 app.put('/testCase/:id', (req, res)  => testCase.update(req, res));
 app.delete('/testCase/:id', (req, res)  => testCase.delete(req, res));
 
-app.post('/testSteps', (req, res) =>testStep.add(req, res));
 app.get('/testSteps', (req, res)  => testStep.getAll(req, res));
 app.put('/testSteps/:id', (req, res) =>testStep.update(req, res));
 app.delete('/testSteps/:id', (req, res) =>testStep.delete(req, res));
@@ -56,4 +55,4 @@ app.get('/quit', function(req,res) {
   });
 
 
-var server = app.listen(port, () => setup.hiya())
+var server = app.listen(port, () => "App is running")

@@ -8,16 +8,34 @@ const common = require('../public/commonlyUsed')
 exports.add = async function(req, res){
     let conn;
     let respon = req.body;
-    let username = req.query.loggedInAs;
+    let testcase_id = '';
+    let created_by = '';
+    let updated_by = '';
+    let created_at = '';
+    let updated_at = '';
+    
+    let ID = '';
+    if(respon.testcase_idnumber){ testcase_id = respon.testcase_idnumber; }
+    else {testcase_id = req.params.id;}
 
-    let testcase_id = req.params.id;
+    if(respon.created_by){created_by = respon.created_by;}
+    else {created_by = req.query.loggedInAs;}
+    
+    if(respon.updated_by){ updated_by = respon.updated_by;}
+    else {updated_by = req.query.loggedInAs;}
+
+    if(respon.updated_at){ updated_at = `'${new Date(respon.updated_at).toJSON().slice(0, 19).replace('T', ' ')}'`;}
+    else {updated_at = 'NOW()'}
+
+    if(respon.created_at){ created_at = `'${new Date(respon.created_at).toJSON().slice(0, 19).replace('T', ' ')}'`;}
+    else {created_at = 'NOW()'}
     
     let table = `INSERT INTO c_teststep (id, client_id ,name,shrt_name ,testcase_idnumber,order_number,step , test_Data, expected_result, description ,status,   created_by,   updated_by, created_at, updated_at) 
-                                   VALUES(?,          ?,   ?,''        ,                ?,           ?,    ?,         ?,               ?,            ?,     1,'${username}','${username}',NOW(),NOW())`
+                                   VALUES(?,          ?,   ?,''        ,                ?,           ?,    ?,         ?,               ?,            ?,     1,'${created_by}','${updated_by}',${created_at},${updated_at})`
     
     try {        
         conn = await db.pooldb.getConnection();
-        
+        console.log(table);
         var rows = await conn.query(table,[
                                            respon.id,
                                            respon.client_id,
@@ -31,7 +49,7 @@ exports.add = async function(req, res){
                                           ])    
         
         respon.id = rows.insertId;
-        
+        console.log(JSON.stringify(rows));
         res.status = 200;
         res.send(JSON.stringify(respon));
 

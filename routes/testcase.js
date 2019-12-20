@@ -34,7 +34,7 @@ exports.add = async function(req, res){
     
     try {        
         conn = await db.pooldb.getConnection();
-        console.log(table);
+        
         var rows = await conn.query(table,[ID,
                                            respon.client_id,
                                            respon.name,
@@ -47,7 +47,7 @@ exports.add = async function(req, res){
                                           ])    
         
         respon.id = rows.insertId;
-        console.log(JSON.stringify(rows));
+
         res.status = 200;
         res.send(JSON.stringify(respon));
 

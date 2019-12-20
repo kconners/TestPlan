@@ -5,6 +5,7 @@
   
     exportData('client');
     exportData('testCase');
+    exportData('testSteps');
 
  }
 
