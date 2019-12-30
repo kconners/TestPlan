@@ -41,10 +41,10 @@ exports.add = async function(req, res){
                                            respon.client_id,
                                            respon.name,
                                            testcase_id,
-                                           respon.orderNumber,
+                                           respon.order_number,
                                            respon.step,
-                                           respon.testData,
-                                           respon.expectedResult, 
+                                           respon.test_data,
+                                           respon.expected_result, 
                                            respon.description
                                           ])    
         
