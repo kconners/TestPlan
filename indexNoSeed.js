@@ -6,6 +6,7 @@ var fs = require('fs')
 const common = require('./database/finishDB');
 
 var client = require('./routes/client');
+var application = require('./routes/application');
 var testCase = require('./routes/testcase');
 var testStep = require('./routes/teststeps');
 var setup = require('./setup');
@@ -31,6 +32,9 @@ app.get('/client', (req, res) =>client.list(req, res));
 app.get('/client/:id/testCase', (req, res) =>testCase.list(req, res));
 app.delete('/client/:id', (req, res) =>client.delete(req, res));
 
+app.post('/client/:clientID/application', (req, res)  => application.add(req, res));
+app.get('/client/:clientID/application', (req, res)  => application.listForClient(req, res));
+
 app.post('/testCase', (req, res)  => testCase.add(req, res));
 app.post('/testCase/:id/testSteps', (req, res) =>testStep.add(req, res));
 app.get('/testCase', (req, res)  => testCase.getAll(req, res));
@@ -39,9 +43,13 @@ app.get('/testCase/:id/testSteps', (req, res) =>testStep.list(req, res));
 app.put('/testCase/:id', (req, res)  => testCase.update(req, res));
 app.delete('/testCase/:id', (req, res)  => testCase.delete(req, res));
 
+app.post('/testSteps', (req, res) =>testStep.add(req, res));
 app.get('/testSteps', (req, res)  => testStep.getAll(req, res));
 app.put('/testSteps/:id', (req, res) =>testStep.update(req, res));
 app.delete('/testSteps/:id', (req, res) =>testStep.delete(req, res));
+
+app.get('/application', (req, res)  => application.listAll(req, res));
+app.delete('/application/:id', (req, res)  => application.delete(req, res));
 
 app.get('/quit', function(req,res) {
     res.send('closing..');
