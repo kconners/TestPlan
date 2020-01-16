@@ -11,7 +11,7 @@
 <body onload="LoadApplications();">
     <div id="nav-placeholder"></div>
     <a href="client.html">Clients</a>
-    <div style="height:100px;overflow:auto;">
+    <div style="height:500px;overflow:auto;">
 
         <table id="table_applications">
             <thead>
@@ -21,7 +21,29 @@
             </thead>
             <tr></tr>
         </table>
-
+        <div id="EditApplication" style="display:none">
+            <span id="application_uuid" style="display:none"></span><br />
+            <table>
+                <tr>
+                    <td>Name</td>
+                    <td><input type="text" id="tb_name" /></td>
+                </tr>
+                <tr>
+                    <td>Short Name</td>
+                    <td><input type="text" id="tb_shortName" /></td>
+                </tr>
+                <tr>
+                    <td>Description</td>
+                    <td><input type="text" id="tb_description" /></td>
+                </tr>
+      
+    
+               
+            </table>
+        </div>    
+        <button onclick="ShowAddApplication()" id="btn_showNewApplication">Add An application</button><br />
+        
+        <button onclick="HideAddApplication()" id="btn_Cancel_AddApplication" style="display:none">Cancel Add</button><br />
     </div>
 
 
@@ -66,6 +88,13 @@
             xhr.open("GET", "/client/" + client_idnumber + "/application");
             xhr.setRequestHeader("cache-control", "no-cache");
             xhr.send(data);
+        }
+        function ShowAddApplication() {
+        //    clearTestCaseFields();
+            $('#EditApplication').css('display', 'block');
+            $('#btn_Cancel_AddApplication').css('display', 'block');
+            $('#btn_showNewApplication').css('display', 'none');
+            setUUID();
         }
     </script>
 
