@@ -36,10 +36,10 @@
                     <td>Description</td>
                     <td><input type="text" id="tb_description" /></td>
                 </tr>
-      
-    
-               
+
+
             </table>
+            <button onclick="commitAddApplication(LoadApplications)" id="btn_AddThisApplication">Add this application</button>
         </div>    
         <button onclick="ShowAddApplication()" id="btn_showNewApplication">Add An application</button><br />
         
@@ -49,6 +49,41 @@
 
 
     <script>
+
+           function commitAddApplication(callback) {
+            var rowID = $(application_uuid).text();
+            var _clientId = getUrlVars()["client"];
+           
+            var _loggedInAs = "kconners";
+            var data = JSON.stringify({
+                "name":$(tb_name).val(),
+                "shrt_name":$(tb_shortName).val(),
+	            "description": $(tb_description).val()
+            });
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", `/client/${_clientId}/application?loggedInAs=${_loggedInAs}`, false);
+            xhr.setRequestHeader("Cache-Control", "no-cache");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(data);
+
+            callback();
+        };
+        function deleteTestCase(rowNumber) {
+            var rowID = document.getElementById("table_applications").rows[rowNumber + 1].cells[0].innerHTML;
+            var data = null;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("DELETE", `/application/${rowID}?loggedInAs=${_loggedInAs}`, false);
+            xhr.setRequestHeader("Cache-Control", "no-cache");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.addEventListener("readystatechange", function () {
+            });
+            xhr.send(data);
+            
+            loadTestCases();
+            
+        }
         function LoadApplications() {
             $("#table_applications tbody tr").remove();
             var client_idnumber = getUrlVars()["client"];
@@ -59,11 +94,12 @@
             xhr.addEventListener("readystatechange", function () {
                 if (this.readyState === 4) {
                     var data = JSON.parse(this.responseText);
-                    for (var i = 0; i < data.applications.length; i++) {
+                    for (var i = 0; i < data.length; i++) {
                         // alert(data.actions[i].action);
-                        var _id = data.applications[i].idnumber;
-                        var _application = data.applications[i].name;
-                        var _short = data.applications[i].srt_name;
+                        var _id = data[i].idnumber;
+                        var _application = data[i].name;
+                        var _short = data[i].shrt_name;
+                        var _description = data[i].description;
                         var rowNum = tableRef.rows.length;
                         var newRow = tableRef.insertRow(rowNum);
                         newRow.setAttribute("class", "table_row_" + isOdd(rowNum));
