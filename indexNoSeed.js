@@ -9,6 +9,7 @@ var client = require('./routes/client');
 var application = require('./routes/application');
 var testCase = require('./routes/testcase');
 var testStep = require('./routes/teststeps');
+var component = require('./routes/component');
 var setup = require('./setup');
 var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
@@ -48,8 +49,17 @@ app.get('/testSteps', (req, res)  => testStep.getAll(req, res));
 app.put('/testSteps/:id', (req, res) =>testStep.update(req, res));
 app.delete('/testSteps/:id', (req, res) =>testStep.delete(req, res));
 
+app.post('/application', (req, res)  => application.add(req, res));
 app.get('/application', (req, res)  => application.listAll(req, res));
 app.delete('/application/:id', (req, res)  => application.delete(req, res));
+
+app.post('/application/:applicationID/component', (req, res)  => component.add(req, res));
+app.get('/application/:applicationID/component', (req, res)  => component.listForApplication(req, res));
+
+app.post('/component', (req, res)  => component.add(req, res));
+app.get('/component', (req, res)  => component.listAll(req, res));
+app.delete('/component/:id', (req, res)  => component.delete(req, res));
+
 
 app.get('/quit', function(req,res) {
     res.send('closing..');
@@ -61,6 +71,10 @@ app.get('/quit', function(req,res) {
   app.get('/ManageClientsApplications.html',function(req,res) {
     res.sendFile(__dirname + '/public/views/ManageClientsApplications.html');
   });
+  app.get('/ManageApplicationComponents.html',function(req,res) {
+    res.sendFile(__dirname + '/public/views/ManageApplicationComponents.html');
+  });
+
 
 
 var server = app.listen(port, () => "App is running")

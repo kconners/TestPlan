@@ -3,6 +3,7 @@ exports.hiya =  function(){
   AddSeeds('testCase');
   AddSeeds('testSteps');
   AddSeeds('application');
+  AddSeeds('component');
 };
 
 function AddSeeds(dataModel){

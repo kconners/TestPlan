@@ -49,6 +49,7 @@ const tables = [{"tableName":"client","tableType":"reference"},
                   {"columnName":"expected_result","columnType":"text"}
                 ]},
                 {"tableName":"client_application","tableType":"mapping"},
+                {"tableName":"application_component","tableType":"family"}
               ];
 
  function addTable(){
@@ -64,6 +65,18 @@ const tables = [{"tableName":"client","tableType":"reference"},
     else if (element.tableType.toLocaleLowerCase() === "mapping"){
       table = `CREATE TABLE ${element.tableName}_mapping (id VARCHAR(50), client_id VARCHAR(50), parent INT NOT NULL, child INT NOT NULL, status INT NOT NULL, created_by VARCHAR(50) NOT NULL, updated_by VARCHAR(50) NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL);`
     }
+
+    else if (element.tableType.toLocaleLowerCase() === "family"){
+      let ExtraColumns = "";
+      if(element.extraColumns && element.extraColumns.length >= 1)
+       {
+         element.extraColumns.forEach(i => 
+         ExtraColumns = ExtraColumns + `${i.columnName} ${i.columnType},`);
+       }
+      table = `CREATE TABLE f_${element.tableName} (id VARCHAR(50), parent_id VARCHAR(50), name VARCHAR(50) NOT NULL,shrt_name VARCHAR(50) NOT NULL,  ${ExtraColumns} description text NOT NULL, status INT NOT NULL, created_by VARCHAR(50) NOT NULL, updated_by VARCHAR(50) NOT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL);`
+    }
+    
+
     else if (element.tableType.toLocaleLowerCase() === "client"){
       let ExtraColumns = "";
       if(element.extraColumns && element.extraColumns.length >= 1)

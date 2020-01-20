@@ -1,4 +1,3 @@
-
 const express = require('express')
 const mariadb = require('../database/node_modules/mariadb');
 const db = require('../database/startDB')
@@ -9,9 +8,9 @@ exports.add = async function(req, res){
     let respon = req.body;
     let username = req.query.loggedInAs;
 
-    let client_idnumber = '';
-    if(respon.client_id){ client_idnumber = respon.client_id; }
-    else {client_idnumber = req.params.clientID;}
+    let application_idnumber = '';
+    if(respon.parent_id){ application_idnumber = respon.parent_id; }
+    else {application_idnumber = req.params.applicationID;}
 
     let ID = '';
     if(!respon.id){
@@ -34,8 +33,8 @@ exports.add = async function(req, res){
     else {created_at = 'NOW()'}
 
      
-    let table = `INSERT INTO c_application (id,client_id, name, shrt_name, description ,status,created_by, updated_by, created_at, updated_at) 
-                  VALUES('${ID}','${client_idnumber}','${respon.name}','${respon.shrt_name}','${respon.description}',1,'${username}','${username}',NOW(),NOW())`
+    let table = `INSERT INTO f_application_component (id,parent_id, name, shrt_name, description ,status,created_by, updated_by, created_at, updated_at) 
+                  VALUES('${ID}','${application_idnumber}','${respon.name}','${respon.shrt_name}','${respon.description}',1,'${username}','${username}',NOW(),NOW())`
     
     try {        
         conn = await db.pooldb.getConnection();
@@ -61,7 +60,7 @@ exports.delete = async function(req, res){
     let respon = req.body;
     let username = req.query.loggedInAs;
     
-    let table = `UPDATE c_application
+    let table = `UPDATE f_application_component
     
     set status = -1,
     updated_by = '${username}',
@@ -86,10 +85,10 @@ exports.delete = async function(req, res){
           if (conn) return conn.end();
         }      
   }
-exports.listForClient = async function(req, res){
+exports.listForApplication = async function(req, res){
     let conn;
     
-    let table = `select * from c_application where client_id = '${req.params.clientID}' and status > 0;`
+    let table = `select * from f_application_component where parent_id = '${req.params.applicationID}' and status > 0;`
     
     try {        
         conn = await db.pooldb.getConnection();
@@ -113,7 +112,7 @@ exports.listForClient = async function(req, res){
 exports.listAll = async function(req, res){
     let conn;
     
-    let table = `select * from c_application where status > 0;`
+    let table = `select * from f_application_component where status > 0;`
     
     try {        
         conn = await db.pooldb.getConnection();
@@ -132,6 +131,3 @@ exports.listAll = async function(req, res){
           if (conn) return conn.end();
         }     
 }
-
-
-

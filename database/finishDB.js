@@ -7,6 +7,7 @@
     exportData('testCase');
     exportData('testSteps');
     exportData('application');
+    exportData('component');
 
  }
 
