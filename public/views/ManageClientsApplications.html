@@ -69,7 +69,7 @@
 
             callback();
         };
-        function deleteTestCase(rowNumber) {
+        function deleteApplication(rowNumber) {
             var rowID = document.getElementById("table_applications").rows[rowNumber + 1].cells[0].innerHTML;
             var data = null;
 
@@ -116,7 +116,7 @@
                         var newCell4 = newRow.insertCell(3);
                         var a_delete = document.createElement("a");
                         a_delete.text = "Delete";
-                        a_delete.href = "javascript:DeleteAction(" + rowNum + ",GetAllClients)";
+                        a_delete.href = "javascript:deleteApplication(" + rowNum + ",GetAllClients)";
                         newCell4.appendChild(a_delete);
                     }
                 }
