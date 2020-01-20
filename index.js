@@ -48,6 +48,7 @@ app.get('/testSteps', (req, res)  => testStep.getAll(req, res));
 app.put('/testSteps/:id', (req, res) =>testStep.update(req, res));
 app.delete('/testSteps/:id', (req, res) =>testStep.delete(req, res));
 
+app.post('/application', (req, res)  => application.add(req, res));
 app.get('/application', (req, res)  => application.listAll(req, res));
 app.delete('/application/:id', (req, res)  => application.delete(req, res));
 

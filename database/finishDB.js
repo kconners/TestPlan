@@ -6,6 +6,7 @@
     exportData('client');
     exportData('testCase');
     exportData('testSteps');
+    exportData('application');
 
  }
 
