@@ -50,7 +50,7 @@
 
     <script>
 
-           function commitAddApplication(callback) {
+        function commitAddApplication(callback) {
             var rowID = $(application_uuid).text();
             var _clientId = getUrlVars()["client"];
            
@@ -67,12 +67,16 @@
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.send(data);
 
+            document.getElementById("tb_name").value = "";
+            document.getElementById("tb_shortName").value = "";
+            document.getElementById("tb_description").value = "";
+
             callback();
         };
         function deleteApplication(rowNumber) {
             var rowID = document.getElementById("table_applications").rows[rowNumber + 1].cells[0].innerHTML;
             var data = null;
-
+            var _loggedInAs = "kconners";
             var xhr = new XMLHttpRequest();
             xhr.open("DELETE", `/application/${rowID}?loggedInAs=${_loggedInAs}`, false);
             xhr.setRequestHeader("Cache-Control", "no-cache");
