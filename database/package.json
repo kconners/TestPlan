@@ -1,0 +1,22 @@
+{
+  "name": "database",
+  "version": "1.0.0",
+  "description": "",
+  "main": "startDB.js",
+  "scripts": {
+    "test": "test",
+    "build": "node startDB.js createDB"
+  },
+  "repository": {
+    "type": "git",
+    "url": "kconners"
+  },
+  "author": "kconners",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "make-runnable": "^1.3.6",
+    "mariadb": "^2.1.4",
+    "mysql": "^2.17.1"
+  }
+}

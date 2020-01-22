@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Components</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src= "/commonlyUsed.js"></script>
+    <script type="text/JavaScript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    <script>$(function () { $("#nav-placeholder").load("/nav.html"); });</script>
+</head>
+<body onload="LoadComponents();">
+    <div id="nav-placeholder"></div>
+    <a href="client.html">Clients</a>
+    <div style="height:500px;overflow:auto;">
+
+        <table id="table_components">
+            <thead>
+            <th>Name</th>
+            <th>Short Name</th>
+            <th>Description</th>
+            <th>Options</th>
+            </thead>
+            <tr></tr>
+        </table>
+        <div id="EditComponent" style="display:none">
+            <span id="component_uuid" style="display:none"></span><br />
+            <table>
+                <tr>
+                    <td>Name</td>
+                    <td><input type="text" id="tb_name" /></td>
+                </tr>
+                <tr>
+                    <td>Short Name</td>
+                    <td><input type="text" id="tb_shortName" /></td>
+                </tr>
+                <tr>
+                    <td>Description</td>
+                    <td><input type="text" id="tb_description" /></td>
+                </tr>
+
+
+            </table>
+            <button onclick="commitAddComponent(LoadComponents)" id="btn_AddThiComponent">Add this Component</button>
+        </div>    
+        <button onclick="ShowAddComponent()" id="btn_showNewComponent">Add A Component</button><br />
+        
+        <button onclick="hideAddComponent()" id="btn_Cancel_AddComponent" style="display:none">Cancel Add</button><br />
+    </div>
+
+
+
+    <script>
+
+        function commitAddComponent(callback) {
+            var rowID = $(component_uuid).text();
+            var _applicationId = getUrlVars()["application"];
+           
+            var _loggedInAs = "kconners";
+            var data = JSON.stringify({
+                "name":$(tb_name).val(),
+                "shrt_name":$(tb_shortName).val(),
+	            "description": $(tb_description).val()
+            });
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", `/application/${_applicationId}/component?loggedInAs=${_loggedInAs}`, false);
+            xhr.setRequestHeader("Cache-Control", "no-cache");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(data);
+
+            document.getElementById("tb_name").value = "";
+            document.getElementById("tb_shortName").value = "";
+            document.getElementById("tb_description").value = "";
+
+            callback();
+        };
+        function hideAddComponent(){
+            $('#EditComponent').css('display', 'none');
+            $('#btn_Cancel_AddComponent').css('display', 'none');
+            $('#btn_showNewComponent').css('display', 'block');
+
+            document.getElementById("tb_name").value = "";
+            document.getElementById("tb_shortName").value = "";
+            document.getElementById("tb_description").value = "";
+        }
+        function deleteComponent(rowNumber) {
+            var rowID = document.getElementById("table_components").rows[rowNumber + 1].cells[0].innerHTML;
+            var data = null;
+            var _loggedInAs = "kconners";
+            var xhr = new XMLHttpRequest();
+            xhr.open("DELETE", `/component/${rowID}?loggedInAs=${_loggedInAs}`, false);
+            xhr.setRequestHeader("Cache-Control", "no-cache");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.addEventListener("readystatechange", function () {
+            });
+            xhr.send(data);
+            
+            LoadComponents();
+            
+        }
+        function LoadComponents() {
+            $("#table_components tbody tr").remove();
+            var application_idnumber = getUrlVars()["application"];
+            var tableRef = document.getElementById('table_components').getElementsByTagName('tbody')[0];
+            var data = null;
+            var xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+            xhr.addEventListener("readystatechange", function () {
+                if (this.readyState === 4) {
+                    var data = JSON.parse(this.responseText);
+                    for (var i = 0; i < data.length; i++) {
+                        // alert(data.actions[i].action);
+                        var _id = data[i].id;
+                        var _application = data[i].name;
+                        var _short = data[i].shrt_name;
+                        var _description = data[i].description;
+                        var rowNum = tableRef.rows.length;
+                        var newRow = tableRef.insertRow(rowNum);
+                        newRow.setAttribute("class", "table_row_" + isOdd(rowNum));
+                        var newCell1 = newRow.insertCell(0);
+                        var applicationID = document.createTextNode((_id));
+                        newCell1.setAttribute("style", "display:none");
+                        newCell1.appendChild(applicationID);
+                        var newCell2 = newRow.insertCell(1);
+                        var applciation_name = document.createTextNode((_application));
+                        newCell2.appendChild(applciation_name);
+                        var newCell3 = newRow.insertCell(2);
+                        var application_sn = document.createTextNode((_short));
+                        newCell3.appendChild(application_sn);
+
+                        var newCell4 = newRow.insertCell(3);
+                        var item_description = document.createTextNode((_description));
+                        newCell4.appendChild(item_description);
+
+                        var newCell5 = newRow.insertCell(4);
+                        
+                        var a_delete = document.createElement("a");
+                        a_delete.text = " Delete";
+                        a_delete.href = "javascript:deleteComponent(" + rowNum + ",LoadComponents)";
+                        newCell5.appendChild(a_delete);
+                    }
+                }
+            });
+            xhr.open("GET", "/application/" + application_idnumber + "/component");
+            xhr.setRequestHeader("cache-control", "no-cache");
+            xhr.send(data);
+        }
+        function ShowAddComponent() {
+        //    clearTestCaseFields();
+            $('#EditComponent').css('display', 'block');
+            $('#btn_Cancel_AddComponent').css('display', 'block');
+            $('#btn_showNewComponent').css('display', 'none');
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Test Case</title>
+    <link rel="stylesheet" href="/styles.css">
+ 
+    
+    <script type="text/JavaScript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    
+
+    <script>$(function () { $("#nav-placeholder").load("/nav.html"); });</script>
+    <script src= "../commonlyUsed.js"></script>
+    
+</head>
+<body onload="loadClientsNoCallBack()">
+    <div id="nav-placeholder"></div><br/>
+    <a href="../../Index.html">Home Screen</a><br />
+    <select id="dd_clientSelect" onchange="loadTestCases()"></select>
+    <label for="tb_testcaseSearch">Search:</label>
+    <input type="text" id="tb_testcaseSearch" name="tb_testcaseSearch">
+    <button onclick="">Find Test Case</button><br />
+
+    <table id="table_testcases">
+        <thead>
+        <th>Component</th>
+        <th>Title</th>
+        </thead>
+        <tbody>
+            <tr></tr>
+        </tbody>
+    </table>
+
+
+
+    <div id="EditTestCase" style="display:none">
+        <span id="tc_uuid" style="display:none"></span><br />
+        <table>
+            <tr>
+                <td>Component</td>
+                <td><input type="text" id="tb_component" /></td>
+            </tr>
+            <tr>
+                <td>Title</td>
+                <td><input type="text" id="tb_title" /></td>
+            </tr>
+            <tr>
+                <td>Summary</td>
+                <td><input type="text" id="tb_summary" /></td>
+            </tr>
+            <tr>
+                <td>Description</td>
+                <td><input type="text" id="tb_desciption" /></td>
+            </tr>
+            <tr>
+                <td>Project</td>
+                <td><input type="text" id="tb_project" /></td>
+            </tr>
+            <tr>
+                <td>Version</td>
+                <td><input type="text" id="tb_version" /></td>
+            </tr>
+            <tr>
+                <td>Priority</td>
+                <td><input type="text" id="tb_priority" /></td>
+            </tr>
+
+
+
+           
+        </table>
+        <table id="table_teststeps">
+            <thead>
+            <th>Step Number</th>
+            <th>Step</th>
+            <th>Test Data</th>
+            <th>Expected Result</th>
+            <th>Actions</th>
+            </thead>
+            <tbody>
+                <tr></tr>
+            </tbody>
+        </table>
+        <button onclick="AddNewStep()">Add New Test Step</button><br/>
+    <button onclick="commitEditTestCase(loadTestCases)" id="btn_EditTestCase">Save updates</button>
+    <button onclick="commitAddTestCase(loadTestCases)" id="btn_AddThisTestCase">Add This test case</button>
+    <button onclick="WriteId()">Write a file</button>
+
+    <button onclick="CancelAddTestCase()" id="btn_Cancel_AddTestCase">Cancel</button>
+    </div>
+    <button onclick="ShowAddTestCases()">Add Test Case</button><br />
+
+    <script>
+        function loadTestSteps(rowNumber) {
+
+            var testCaseID = document.getElementById("table_testcases").rows[rowNumber + 1].cells[0].innerHTML;
+
+            $("#table_teststeps tbody tr").remove();
+
+            var tableRef = document.getElementById('table_teststeps').getElementsByTagName('tbody')[0];
+            
+            
+            var data = null;
+            var xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+            xhr.addEventListener("readystatechange", function () {
+                if (this.readyState === 4) {
+                    var data = JSON.parse(this.responseText);
+                    for (var i = 0; i < data.length; i++) {
+
+                        var _id = data[i].id;
+                        var _stepNumber = data[i].order_number;
+                        var _step = data[i].step;
+                        var _stepTestData = data[i].test_data;
+                        var _stepExpectedResult = data[i].expected_result;
+
+                        var rowNum = tableRef.rows.length;
+                        var newRow = tableRef.insertRow(rowNum);
+                        newRow.setAttribute("class", "table_row_" + isOdd(rowNum));
+
+                        var newCell1 = newRow.insertCell(0);
+                        var ID = document.createTextNode((_id));
+                        newCell1.setAttribute("style", "display:none");
+                        newCell1.appendChild(ID);
+
+                        var newCell2 = newRow.insertCell(1);
+                        var teststep_stepNumber = document.createTextNode((_stepNumber));
+                        newCell2.appendChild(teststep_stepNumber);
+                        
+                        var teststep_step = document.createElement("input");
+                        teststep_step.type = "text";
+                        teststep_step.id = "tb_" + rowNum + "_step";
+                        teststep_step.value = _step;
+
+                        var newCell3 = newRow.insertCell(2);
+                        newCell3.appendChild(teststep_step);
+
+
+                        var teststep_stepTestData = document.createElement("input");
+                        teststep_stepTestData.type = "text";
+                        teststep_stepTestData.id = "tb_" + rowNum + "_step_testdata";
+                        teststep_stepTestData.value = _stepTestData;
+                        
+                        var newCell4 = newRow.insertCell(3);
+                        newCell4.appendChild(teststep_stepTestData);
+
+
+                        var teststep_stepExpectedResult = document.createElement("input");
+                        teststep_stepExpectedResult.type = "text";
+                        teststep_stepExpectedResult.id = "tb_" + rowNum + "_step_expectedResult";
+                        teststep_stepExpectedResult.value = _stepExpectedResult;
+
+                        var newCell5 = newRow.insertCell(4);
+                        newCell5.appendChild(teststep_stepExpectedResult);
+
+                        var newCell6 = newRow.insertCell(5);
+                        var a_delete = document.createElement("a");
+                        a_delete.text = "Delete";
+                        a_delete.href = "javascript:Deletestep(" + rowNum + ")";
+                        newCell6.appendChild(a_delete);
+                    }
+                }
+            });
+            xhr.open("GET", "/testCase/" + testCaseID + "/testSteps");
+            xhr.setRequestHeader("cache-control", "no-cache");
+            xhr.send(data);
+        }
+        function loadTestSteps() {
+
+            var testCaseID = document.getElementById("tc_uuid").innerHTML;
+
+            $("#table_teststeps tbody tr").remove();
+
+            var tableRef = document.getElementById('table_teststeps').getElementsByTagName('tbody')[0];
+
+
+            var data = null;
+            var xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+            xhr.addEventListener("readystatechange", function () {
+                if (this.readyState === 4) {
+                    var data = JSON.parse(this.responseText);
+                    for (var i = 0; i < data.length; i++) {
+
+                        var _id = data[i].id;
+                        var _stepNumber = data[i].order_number;
+                        var _step = data[i].step;
+                        var _stepTestData = data[i].test_data;
+                        var _stepExpectedResult = data[i].expected_result;
+
+                        var rowNum = tableRef.rows.length;
+                        var newRow = tableRef.insertRow(rowNum);
+                        newRow.setAttribute("class", "table_row_" + isOdd(rowNum));
+
+                        var newCell1 = newRow.insertCell(0);
+                        var ID = document.createTextNode((_id));
+                        newCell1.setAttribute("style", "display:none");
+                        newCell1.appendChild(ID);
+
+                        var newCell2 = newRow.insertCell(1);
+                        var teststep_stepNumber = document.createTextNode((_stepNumber));
+                        newCell2.appendChild(teststep_stepNumber);
+
+                        var teststep_step = document.createElement("input");
+                        teststep_step.type = "text";
+                        teststep_step.id = "tb_" + rowNum + "_step";
+                        teststep_step.value = _step;
+
+                        var newCell3 = newRow.insertCell(2);
+                        newCell3.appendChild(teststep_step);
+
+
+                        var teststep_stepTestData = document.createElement("input");
+                        teststep_stepTestData.type = "text";
+                        teststep_stepTestData.id = "tb_" + rowNum + "_step_testdata";
+                        teststep_stepTestData.value = _stepTestData;
+
+                        var newCell4 = newRow.insertCell(3);
+                        newCell4.appendChild(teststep_stepTestData);
+
+
+                        var teststep_stepExpectedResult = document.createElement("input");
+                        teststep_stepExpectedResult.type = "text";
+                        teststep_stepExpectedResult.id = "tb_" + rowNum + "_step_expectedResult";
+                        teststep_stepExpectedResult.value = _stepExpectedResult;
+
+                        var newCell5 = newRow.insertCell(4);
+                        newCell5.appendChild(teststep_stepExpectedResult);
+
+
+
+
+                        var newCell6 = newRow.insertCell(5);
+                        var a_delete = document.createElement("a");
+                        a_delete.text = "Delete";
+                        a_delete.href = "javascript:Deletestep(" + rowNum + ")";
+                        newCell6.appendChild(a_delete);
+
+
+
+
+                    }
+                }
+            });
+            xhr.open("GET", "/testCase/" + testCaseID + "/testSteps");
+            xhr.setRequestHeader("cache-control", "no-cache");
+            xhr.send(data);
+        }
+        
+        
+        function Deletestep(rowNumber) {
+            var rowID = document.getElementById("table_teststeps").rows[rowNumber + 1].cells[0].innerHTML;
+            var testCaseID = document.getElementById("tc_uuid").innerHTML;
+            var _loggedInAs = "kconners";
+            var data = null;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("DELETE", "/testSteps/" + rowID + "?loggedInas=" + _loggedInAs, false);
+            xhr.setRequestHeader("Cache-Control", "no-cache");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(data);
+
+            loadTestSteps();
+        }
+        function loadTestCases() {
+
+            var clientID = $(dd_clientSelect).val();
+
+            $("#table_testcases tbody tr").remove();
+            var tableRef = document.getElementById('table_testcases').getElementsByTagName('tbody')[0];
+            var data = null;
+            var xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+            xhr.addEventListener("readystatechange", function () {
+                if (this.readyState === 4) {
+                    var data = JSON.parse(this.responseText);
+                    for (var i = 0; i < data.length; i++) {
+                       
+                         var _clientid = data[i].client_id;
+                     
+                         var rowNum = tableRef.rows.length;
+                         var newRow = tableRef.insertRow(rowNum);
+                         newRow.setAttribute("class", "table_row_" + isOdd(rowNum));
+
+                         var newCell1 = newRow.insertCell(0);
+                         var ID = document.createTextNode((data[i].id));
+                         newCell1.setAttribute("style", "display:none");
+                         newCell1.appendChild(ID);
+
+                         var newCell2 = newRow.insertCell(1);
+                         var testcase_component = document.createTextNode((data[i].component));
+                         newCell2.appendChild(testcase_component);
+
+                         var newCell3 = newRow.insertCell(2);
+                         var testcase_name = document.createTextNode((data[i].name));
+                         newCell3.appendChild(testcase_name);
+
+                        // var newCell4 = newRow.insertCell(3);
+                        // var testcase_azure = document.createTextNode((_azureNumber));
+                        // newCell4.appendChild(testcase_azure);
+
+                        // var newCell5 = newRow.insertCell(4);
+                        // var testcase_jira = document.createTextNode((_jiraNumber));
+                        // newCell5.appendChild(testcase_jira);
+
+                         var newCell4 = newRow.insertCell(3);
+                         var a_edit = document.createElement("a");
+                         a_edit.text = "Edit";
+                         a_edit.href = "javascript:editTestCase(" + rowNum + ")";
+                         newCell4.appendChild(a_edit);
+                         var a_delete = document.createElement("a");
+                         a_delete.text = "  Delete";
+                         a_delete.href = "javascript:deleteTestCase(" + rowNum + ")";
+                         newCell4.appendChild(a_delete);
+                    }
+                }
+            });
+
+            xhr.open("GET", `/client/${clientID}/testCase`);
+            xhr.setRequestHeader("cache-control", "no-cache");
+            xhr.send(data);
+        }
+        function findTestCase(callback) {
+            var _action = $(tb_name).val();
+            var _shortname = $(tb_shortName).val();
+            var _actionID = $(action_uuid).text();
+            var _loggedInAs = "kconners";
+
+
+            var data = JSON.stringify({
+                "action": _action,
+                "shortname": _shortname,
+                "client_idnumber": "00000000-0000-0000-0000-000000000000",
+            });
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/../api/Action?loggedInas=" + _loggedInAs, false);
+            xhr.setRequestHeader("Cache-Control", "no-cache");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(data);
+
+            setUUID();
+
+            callback();
+        }
+        function editTestCase(rowNumber) {
+            var rowID = document.getElementById("table_testcases").rows[rowNumber + 1].cells[0].innerHTML;
+            var data = null;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/testCase/" + rowID, false);
+            xhr.setRequestHeader("Cache-Control", "no-cache");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.addEventListener("readystatechange", function () {
+                if (this.readyState === 4) {
+                    var data = JSON.parse(this.responseText);
+                    document.getElementById("tc_uuid").innerHTML = rowID;
+                    document.getElementById("tb_component").value = data[0].component;
+                    document.getElementById("tb_title").value = data[0].name;
+                    document.getElementById("tb_summary").value = data[0].summary;
+
+                    document.getElementById("tb_desciption").value = data[0].description;
+                    document.getElementById("tb_project").value = data[0].shrt_name;
+                    document.getElementById("tb_version").value = data[0].version;
+                    document.getElementById("tb_priority").value = data[0].priority;
+                   
+                }
+            });
+            xhr.send(data);
+            loadTestSteps(rowNumber);
+            ShowEditTestCases();
+            
+        }
+        function deleteTestCase(rowNumber) {
+            var rowID = document.getElementById("table_testcases").rows[rowNumber + 1].cells[0].innerHTML;
+            var data = null;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("DELETE", "/TestCase/" + rowID+"?loggedInAs=kconners", false);
+            xhr.setRequestHeader("Cache-Control", "no-cache");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.addEventListener("readystatechange", function () {
+            });
+            xhr.send(data);
+            
+            loadTestCases();
+            
+        }
+        function setUUID() {
+            
+            document.getElementById('tc_uuid').innerHTML = generateUUID();
+        }
+        
+        function generateUUID() {
+    var d = new Date().getTime();
+    if (Date.now) {
+        d = Date.now(); //high-precision timer
+    }
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = (d + Math.random() * 16) % 16 | 0;
+        d = Math.floor(d / 16);
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+    // document.getElementById('uuid').innerHTML = uuid;
+    return uuid;
+}
+        
+        function ShowEditTestCases() {
+
+            $('#EditTestCase').css('display', 'block');
+            //$('#btn_Cancel_AddTestCase').css('display', 'block');
+            //$('#btn_showNewAction').css('display', 'none');
+            $('#btn_EditTestCase').value = 'Save Test Case';
+            
+        }
+        function ShowAddTestCases() {
+            clearTestCaseFields();
+            $('#EditTestCase').css('display', 'block');
+            $('#btn_Cancel_AddTestCase').css('display', 'block');
+            $('#btn_showNewTestCase').css('display', 'none');
+            setUUID();
+        }
+        function clearTestCaseFields(){
+            document.getElementById("tb_component").value = "";
+            document.getElementById("tb_title").value = "";
+            document.getElementById("tb_summary").value = "";
+            document.getElementById("tb_desciption").value = "";
+            document.getElementById("tb_project").value = "";
+            document.getElementById("tb_version").value = "";
+            document.getElementById("tb_priority").value = "";}
+        function updateTestSteps(){
+          var _loggedInAs = 'kconners';
+            var table = document.getElementById("table_teststeps");
+            for (var i = 1, row; row = table.rows[i]; i++) {
+ 
+             if(table.rows[i].cells[0])
+                {
+                var data = JSON.stringify({
+	                "name":"",
+	                "orderNumber": table.rows[i].cells[1].innerHTML,
+	                "step": table.rows[i].cells[2].children[0].value,
+	                "testData": table.rows[i].cells[3].children[0].value,
+                    "expectedResult": table.rows[i].cells[4].children[0].value,
+                    "status":1,
+	                "description": ""
+                });
+                var xhr = new XMLHttpRequest();
+                xhr.open("PUT", "/testSteps/"+table.rows[i].cells[0].innerHTML+"?loggedInAs=" + _loggedInAs, false);
+                xhr.setRequestHeader("Cache-Control", "no-cache");
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.send(data);
+                }
+}
+        }
+
+        function commitAddTestCase(callback) {
+            var rowID = $(tc_uuid).text();
+            var _clientId = $(dd_clientSelect).val();
+           
+         //   var _testSteps = getSteps();
+
+            var _loggedInAs = "kconners";
+            var data = JSON.stringify({
+                "ID": rowID,
+                "client_id": _clientId,
+                "status": 1,
+                "summary": $(tb_summary).val(),
+                "description": $(tb_desciption).val(),
+                "shrt_name": $(tb_project).val(),
+                "component": $(tb_component).val(),
+                "version": $(tb_version).val(),
+                "priority": $(tb_priority).val(),
+                "name":$(tb_title).val()
+            });
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/TestCase?loggedInas=" + _loggedInAs, false);
+            xhr.setRequestHeader("Cache-Control", "no-cache");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(data);
+
+            callback();
+        };
+        function commitEditTestCase(callback) {
+            updateTestSteps();
+        //     var rowID = $(tc_uuid).text();
+            
+        //     var _title = $(tb_title).val();
+        //     var _summary = $(tb_summary).val();
+        //     var _component = $(tb_component).val();
+        //     var _project = $(tb_project).val();
+        //     var _description = $(tb_desciption).val();
+        //     var _version = $(tb_version).val();
+        //     var _priority = $(tb_priority).val();
+        
+        //     var _testSteps = getSteps();
+
+        //     var _loggedInAs = "kconners";
+        //     var data = JSON.stringify({
+        //         "idNumber": rowID,
+        //         "clientIdNumber": "00000000-0000-0000-0000-000000000000",
+        //         "status": 1,
+        //         "title": _title,
+        //         "summary": _summary,
+        //         "desciption": _description,
+        //         "project": _project,
+        //         "component": _component,
+        //         "version": _version,
+        //         "priority": _priority,
+        //         "externalIDs": _externalIDs,
+        //         "testSteps": _testSteps
+
+        //     });
+
+        //     var xhr = new XMLHttpRequest();
+        //     xhr.open("PUT", "/../api/TestCase?loggedInas=" + _loggedInAs, false);
+        //     xhr.setRequestHeader("Cache-Control", "no-cache");
+        //     xhr.setRequestHeader("Content-Type", "application/json");
+        //     xhr.send(data);
+
+        //     callback();
+         };
+        
+        function getSteps() {
+            var steps = new Array();
+
+            var tableRef = document.getElementById('table_teststeps').getElementsByTagName('tbody')[0];
+            for (var i = 0, row; row = tableRef.rows[i]; i++) {
+
+                var Row = tableRef.rows[i];
+
+                var _testcaseID = $(tc_uuid).text();
+                var _stepID = Row.cells[0].innerHTML;
+                var _stepNumber = Row.cells[1].innerHTML;
+                var _step = Row.cells[2].children[0].value;
+                var _stepTestData = Row.cells[3].children[0].value;
+                var _stepExpectedResults = Row.cells[4].children[0].value;
+
+
+                
+                var TestStep = {
+                    "testCaseID": _testcaseID,
+                    "idNumber": _stepID,
+                    "step": _step,
+                    "status": 1,
+                    "testData": _stepTestData,
+                    "orderNumber": _stepNumber,
+                    "expectedResults": _stepExpectedResults
+                }
+                steps.push(TestStep);
+                }
+            
+            return steps;
+        }
+        function AddNewStep() {
+
+            var tableRef = document.getElementById('table_teststeps').getElementsByTagName('tbody')[0];
+            var rowNum = tableRef.rows.length;
+            var newRow = tableRef.insertRow(rowNum);
+            newRow.setAttribute("class", "table_row_" + isOdd(rowNum));
+
+            var _id = generateUUID();
+            var _stepNumber = rowNum + 1;
+
+            var newCell1 = newRow.insertCell(0);
+            var ID = document.createTextNode((_id));
+            newCell1.setAttribute("style", "display:none");
+            newCell1.appendChild(ID);
+
+            var newCell2 = newRow.insertCell(1);
+            var teststep_stepNumber = document.createTextNode((_stepNumber));
+            newCell2.appendChild(teststep_stepNumber);
+
+            var teststep_step = document.createElement("input");
+            teststep_step.type = "text";
+            teststep_step.id = "tb_" + rowNum + "_step";
+            teststep_step.value = "";
+
+            var newCell3 = newRow.insertCell(2);
+            newCell3.appendChild(teststep_step);
+
+
+            var teststep_stepTestData = document.createElement("input");
+            teststep_stepTestData.type = "text";
+            teststep_stepTestData.id = "tb_" + rowNum + "_step_testdata";
+            teststep_stepTestData.value = "";
+
+            var newCell4 = newRow.insertCell(3);
+            newCell4.appendChild(teststep_stepTestData);
+
+
+            var teststep_stepExpectedResult = document.createElement("input");
+            teststep_stepExpectedResult.type = "text";
+            teststep_stepExpectedResult.id = "tb_" + rowNum + "_step_expectedResult";
+            teststep_stepExpectedResult.value = "";
+
+            var newCell5 = newRow.insertCell(4);
+            newCell5.appendChild(teststep_stepExpectedResult);
+
+
+
+
+            var newCell6 = newRow.insertCell(5);
+            var a_delete = document.createElement("a");
+            a_delete.text = "Delete";
+            a_delete.href = "javascript:Deletestep(" + rowNum + ")";
+            newCell6.appendChild(a_delete);
+
+            commitNewTestCaseStep(rowNum, ShowEditTestCases)
+
+        };
+        function commitNewTestCaseStep(rowNumber ,callback) {
+
+            var _testCaseID = $(tc_uuid).text();
+            var _orderNumber = document.getElementById("table_teststeps").rows[rowNumber + 1].cells[1].innerHTML;
+            var _stepID = document.getElementById("table_teststeps").rows[rowNumber + 1].cells[0].innerHTML;
+
+            var _step = " ";
+            var _testData = " ";
+            var _expectedResult = " ";
+
+            var _loggedInAs = "kconners";
+            var data = JSON.stringify({
+                "client_id": $(dd_clientSelect).val(),
+                "id":_stepID,
+                "status": 1,
+                "step": _step,
+                "name": _step,
+                "testData": _testData,
+                "orderNumber": _orderNumber,
+                "expectedResult": _expectedResult,
+                "description":" "
+            });
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/testCase/" + _testCaseID + "/testSteps?loggedInAs=" + _loggedInAs, false);
+            xhr.setRequestHeader("Cache-Control", "no-cache");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(data);
+
+            callback();
+        };
+
+    </script>
+
+</body>
+</html >
