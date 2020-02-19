@@ -1,4 +1,4 @@
-module.exports = { generateUUID :  function() {
+function generateUUID() {
     var d = new Date().getTime();
     if (Date.now) {
         d = Date.now(); //high-precision timer
@@ -10,7 +10,7 @@ module.exports = { generateUUID :  function() {
     });
     // document.getElementById('uuid').innerHTML = uuid;
     return uuid;
-}
+
 }
 function isOdd(num) {
     var OO = num % 2;
@@ -73,7 +73,37 @@ function loadClients(callback) {
     xhr.setRequestHeader("cache-control", "no-cache");
     xhr.send(data);
 }
+function loadADropdown(dropDownID, route){
+    var THISURL = "http://" + window.location.hostname + ":" + window.location.port;
 
+    var dd_Clients = document.getElementById(dropDownID);
+
+    var length = dd_Clients.options.length;
+    for (i = 0; i < length; i++) {
+        dd_Clients.options[i] = null;
+    }
+
+    var data = null;
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
+    xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+            var data = JSON.parse(this.responseText);
+            for (var i = 0; i < data.length; i++) {
+
+                var option = document.createElement("option");
+                option.text = data[i].name;
+                option.value = data[i].id;
+                dd_Clients.add(option);
+
+            }
+        }
+    });
+
+    xhr.open("GET", THISURL + route);
+    xhr.setRequestHeader("cache-control", "no-cache");
+    xhr.send(data);
+}
 
 function loadClientsNoCallBack() {
     

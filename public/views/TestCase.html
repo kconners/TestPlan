@@ -10,7 +10,8 @@
     
 
     <script>$(function () { $("#nav-placeholder").load("/nav.html"); });</script>
-    <script src= "../commonlyUsed.js"></script>
+    
+    <script type="text/JavaScript" src= "../commonlyUsed.js"></script>
     
 </head>
 <body onload="loadClientsNoCallBack()">
@@ -20,7 +21,7 @@
     <label for="tb_testcaseSearch">Search:</label>
     <input type="text" id="tb_testcaseSearch" name="tb_testcaseSearch">
     <button onclick="">Find Test Case</button><br />
-
+    <select id="dd_test"></select>
     <table id="table_testcases">
         <thead>
         <th>Component</th>
@@ -36,6 +37,10 @@
     <div id="EditTestCase" style="display:none">
         <span id="tc_uuid" style="display:none"></span><br />
         <table>
+            <tr>
+                <td>Application</td>
+                <td><select id="dd_application"/></td>
+            </tr>
             <tr>
                 <td>Component</td>
                 <td><input type="text" id="tb_component" /></td>
@@ -414,11 +419,13 @@
             
         }
         function ShowAddTestCases() {
+            var _clientId = $(dd_clientSelect).val();
             clearTestCaseFields();
             $('#EditTestCase').css('display', 'block');
             $('#btn_Cancel_AddTestCase').css('display', 'block');
             $('#btn_showNewTestCase').css('display', 'none');
             setUUID();
+            loadADropdown("dd_application",`/client/${_clientId}/application`);
         }
         function clearTestCaseFields(){
             document.getElementById("tb_component").value = "";
