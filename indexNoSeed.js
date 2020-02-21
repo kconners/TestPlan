@@ -74,7 +74,9 @@ app.get('/quit', function(req,res) {
   app.get('/ManageApplicationComponents.html',function(req,res) {
     res.sendFile(__dirname + '/public/views/ManageApplicationComponents.html');
   });
-
+  var router = require('express').Router();
+router.use('/automation', require('./routes/automation/auto'))
+app.use(router);
 
 
 var server = app.listen(port, () => "App is running")

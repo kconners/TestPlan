@@ -8,3 +8,27 @@
     <script type="text/JavaScript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
     <script>$(function () { $("#nav-placeholder").load("/nav.html"); });</script>
 </head>
+
+<body onload="loadRoutes();">
+    <div id="nav-placeholder"></div>
+    <a href="../views/ManageApplicationComponents.html" id="nav_back">Components</a>
+    <div style="height:500px;overflow:auto;">
+        <table id="table_routes">
+            <thead>
+            <th>Name</th>
+            <th>Short Name</th>
+            <th>Description</th>
+            <th>Options</th>
+            </thead>
+            <tr></tr>
+        </table>
+    
+<script>
+  function loadRoutes() {
+            $("#table_routes tbody tr").remove();
+            var application_idnumber = getUrlVars()["application"];
+            var tableRef = document.getElementById('table_routes').getElementsByTagName('tbody')[0];
+            document.getElementById("nav_back").href="/ManageApplicationComponents.html?application=" + application_idnumber;
+  }
+</script>
+</body>

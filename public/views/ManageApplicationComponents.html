@@ -137,11 +137,11 @@
                         var a_children = document.createElement("a");
                         if(_short.toLowerCase() === "api"){
                             a_children.text = " Routes";
-                            a_children.href = `/automation/Routes.html?component=${_id};`;
+                            a_children.href = `/automation/Routes.html?component=${_id}&application=${application_idnumber}`;
                         }
                         else if (_short.toLowerCase() === "ui"){
                             a_children.text = " Pages";
-                            a_children.href = `/automation/Pages.html?component=${_id};`;
+                            a_children.href = `/automation/Pages.html?component=${_id}&application=${application_idnumber}`;
                         }
                         newCell5.appendChild(a_children);
 
