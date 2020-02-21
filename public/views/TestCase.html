@@ -39,11 +39,11 @@
         <table>
             <tr>
                 <td>Application</td>
-                <td><select id="dd_application"/></td>
+                <td><select id="dd_application"style="width:200px;"/></td>
             </tr>
             <tr>
                 <td>Component</td>
-                <td><input type="text" id="tb_component" /></td>
+                <td><select id="dd_component"style="width:200px;"/></td>
             </tr>
             <tr>
                 <td>Title</td>
@@ -360,7 +360,7 @@
                 if (this.readyState === 4) {
                     var data = JSON.parse(this.responseText);
                     document.getElementById("tc_uuid").innerHTML = rowID;
-                    document.getElementById("tb_component").value = data[0].component;
+                    document.getElementById("dd_component").value = data[0].component;
                     document.getElementById("tb_title").value = data[0].name;
                     document.getElementById("tb_summary").value = data[0].summary;
 
@@ -418,17 +418,29 @@
             $('#btn_EditTestCase').value = 'Save Test Case';
             
         }
-        function ShowAddTestCases() {
+        async function ShowAddTestCases() {
             var _clientId = $(dd_clientSelect).val();
             clearTestCaseFields();
             $('#EditTestCase').css('display', 'block');
             $('#btn_Cancel_AddTestCase').css('display', 'block');
             $('#btn_showNewTestCase').css('display', 'none');
             setUUID();
-            loadADropdown("dd_application",`/client/${_clientId}/application`);
+            let count = await loadADropdown("dd_application",`/client/${_clientId}/application`);
+
+            var dd_application = document.getElementById("dd_application");
+
+            var app_length = dd_application.options.length;
+
+            
+            alert(app_length);
+            if(count === 1){
+                _applicationId = $(dd_application).val();
+                let applicationCount = loadADropdown("dd_component",`/application/${_applicationId}/component`);
+            }
+            alert(dd_application.options.length);
         }
         function clearTestCaseFields(){
-            document.getElementById("tb_component").value = "";
+//            document.getElementById("tb_component").value = "";
             document.getElementById("tb_title").value = "";
             document.getElementById("tb_summary").value = "";
             document.getElementById("tb_desciption").value = "";
@@ -474,7 +486,7 @@
                 "summary": $(tb_summary).val(),
                 "description": $(tb_desciption).val(),
                 "shrt_name": $(tb_project).val(),
-                "component": $(tb_component).val(),
+                "component": $(dd_component).val(),
                 "version": $(tb_version).val(),
                 "priority": $(tb_priority).val(),
                 "name":$(tb_title).val()

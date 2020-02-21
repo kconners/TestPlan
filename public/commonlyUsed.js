@@ -86,17 +86,19 @@ function loadADropdown(dropDownID, route){
     var data = null;
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
-    xhr.addEventListener("readystatechange", function () {
+    xhr.addEventListener("readystatechange", async function () {
         if (this.readyState === 4) {
-            var data = JSON.parse(this.responseText);
-            for (var i = 0; i < data.length; i++) {
-
+            var returneddata = await JSON.parse(this.responseText);
+            for (var i = 0; i < returneddata.length; i++) {
+               
                 var option = document.createElement("option");
-                option.text = data[i].name;
-                option.value = data[i].id;
+                option.text = returneddata[i].name;
+                option.value = returneddata[i].id;
                 dd_Clients.add(option);
-
             }
+            return returneddata.length;
+            alert(returneddata.length)
+            
         }
     });
 

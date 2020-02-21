@@ -15,6 +15,11 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(express.static(__dirname + '/public'));
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:9999"); // update to match the domain you will make the request from
+  res.header("Access-Control-Allow-Headers", "*");
+  next();
+});
 
 app.get('/', (req, res) => res.send('Hello World!'));
 
