@@ -29,8 +29,17 @@ app.get('/client.html',function(req,res) {
 app.get('/TestCase.html',function(req,res) {
   res.sendFile(__dirname + '/public/views/TestCase.html');
 });
+
 app.get('/TestCycle.html',function(req,res) {
   res.sendFile(__dirname + '/public/views/TestCycle.html');
+});
+
+app.get('/ManageClientsApplications.html',function(req,res) {
+  res.sendFile(__dirname + '/public/views/ManageClientsApplications.html');
+});
+
+app.get('/ManageApplicationComponents.html',function(req,res) {
+  res.sendFile(__dirname + '/public/views/ManageApplicationComponents.html');
 });
 
 app.post('/client', (req, res)  => client.add(req, res));
@@ -72,13 +81,11 @@ app.get('/quit', function(req,res) {
     //server.close();
   });
 
-  app.get('/ManageClientsApplications.html',function(req,res) {
-    res.sendFile(__dirname + '/public/views/ManageClientsApplications.html');
-  });
 
-  app.get('/ManageApplicationComponents.html',function(req,res) {
-    res.sendFile(__dirname + '/public/views/ManageApplicationComponents.html');
-  });
+
+  var router = require('express').Router();
+router.use('/automation', require('./routes/automation/auto'))
+app.use(router);
 
 
 var server = app.listen(port, () => setup.hiya())

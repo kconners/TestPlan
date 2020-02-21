@@ -95,8 +95,6 @@ exports.listForApplication = async function(req, res){
         
         var rows = await conn.query(table)    
         
-        //respon.id = rows.insertId;
-  
         res.status = 200;
         res.send(JSON.stringify(rows));
   

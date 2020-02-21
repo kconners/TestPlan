@@ -49,7 +49,8 @@ const tables = [{"tableName":"client","tableType":"reference"},
                   {"columnName":"expected_result","columnType":"text"}
                 ]},
                 {"tableName":"client_application","tableType":"mapping"},
-                {"tableName":"application_component","tableType":"family"}
+                {"tableName":"application_component","tableType":"family"},
+                {"tableName":"application_page","tableType":"family","extraColumns":[{"columnName":"route","columnType":"text"}]}
               ];
 
  function addTable(){
