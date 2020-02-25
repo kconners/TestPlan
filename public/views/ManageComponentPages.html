@@ -22,8 +22,40 @@
             </thead>
             <tr></tr>
         </table>
-    
+        <div id="EditItem" style="display:none">
+            <span id="item_uuid" style="display:none"></span><br />
+            <table>
+                <tr>
+                    <td>Name</td>
+                    <td><input type="text" id="tb_name" /></td>
+                </tr>
+                <tr>
+                    <td>Short Name</td>
+                    <td><input type="text" id="tb_shortName" /></td>
+                </tr>
+                <tr>
+                    <td>Route</td>
+                    <td><input type="text" id="tb_route" /></td>
+                </tr>
+                <tr>
+                    <td>Description</td>
+                    <td><input type="text" id="tb_description" /></td>
+                </tr>
+
+
+            </table>
+            <button onclick="commitAddItem(loadPages)" id="btn_AddThisItem">Add this page</button>
+        </div>    
+        <button onclick="ShowAddItem()" id="btn_showNewComponent">Add A Component</button><br />
+        
+        <button onclick="hideAddItem()" id="btn_Cancel_AddItem" style="display:none">Cancel Add</button><br />
 <script>
+     function ShowAddPage() {
+        //    clearTestCaseFields();
+            $('#EditItem').css('display', 'block');
+            $('#btn_Cancel_AddPage').css('display', 'block');
+            $('#btn_showNewPage').css('display', 'none');
+        }
   function loadPages() {
             $("#table_pages tbody tr").remove();
             var application_idnumber = getUrlVars()["application"];
